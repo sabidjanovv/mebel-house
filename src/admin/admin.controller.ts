@@ -17,8 +17,8 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { AuthService } from '../auth/auth.service';
-// import { AdminCreatorGuard } from '../common/guards/admin_creator.guard';
-// import { AdminSelfGuard } from '../common/guards/admin-self.guard';
+import { AdminCreatorGuard } from '../common/guards/admin_creator.guard';
+import { AdminSelfGuard } from '../common/guards/admin-self.guard';
 
 @ApiTags('Admin')
 @Controller('admin')
@@ -28,7 +28,7 @@ export class AdminController {
     private readonly authService: AuthService,
   ) {}
 
-  // @UseGuards(AdminCreatorGuard)
+  @UseGuards(AdminCreatorGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new admin' })
   @ApiResponse({ status: 201, description: 'Admin successfully created' })
@@ -60,7 +60,7 @@ export class AdminController {
     return this.adminService.refreshToken(+id, refresh_token, res);
   }
 
-  // @UseGuards(AdminCreatorGuard)
+  @UseGuards(AdminCreatorGuard)
   @Get()
   @ApiOperation({ summary: 'Get all admins' })
   @ApiResponse({ status: 200, description: 'List of all admins' })
@@ -68,7 +68,7 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
-  // @UseGuards(AdminSelfGuard)
+  @UseGuards(AdminSelfGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get an admin by ID' })
   @ApiParam({ name: 'id', description: 'Admin unique identifier' })
@@ -81,7 +81,7 @@ export class AdminController {
     return this.adminService.findOne(+id);
   }
 
-  // @UseGuards(AdminSelfGuard)
+  @UseGuards(AdminSelfGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update an admin' })
   @ApiParam({ name: 'id', description: 'Admin unique identifier' })
@@ -91,7 +91,7 @@ export class AdminController {
     return this.adminService.update(+id, updateAdminDto);
   }
 
-  // @UseGuards(AdminCreatorGuard)
+  @UseGuards(AdminCreatorGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an admin' })
   @ApiParam({ name: 'id', description: 'Admin unique identifier' })
