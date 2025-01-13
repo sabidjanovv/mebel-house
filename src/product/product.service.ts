@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Product } from './models/product.model';
 
 @Injectable()
 export class ProductService {
+  constructor(@InjectModel(Product) private productModel: typeof Product) {}
+
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    return this.productModel.create(createProductDto);
   }
 
   findAll() {
-    return `This action returns all product`;
+    return this.productModel.findAll({ include: { all: true } });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} product`;
+    return this.productModel.findByPk(+id, { include: { all: true } });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    const update = await this.productModel.update(updateProductDto, {
+      where: { id },
+      returning: true,
+    });
+    return update;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} product`;
+    return this.productModel.destroy({ where: { id } });
   }
 }

@@ -23,6 +23,7 @@ import { ProductModule } from './product/product.module';
 import { OrderItemsModule } from './order_items/order_items.module';
 import { CartItemsModule } from './cart_items/cart_items.module';
 import { ProductDetailModule } from './product_detail/product_detail.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -37,9 +38,7 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [
-        Admin,
-      ],
+      models: [Admin],
       autoLoadModels: true,
       sync: { alter: true },
       logging: false,
@@ -61,7 +60,8 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
     ProductModule,
     OrderItemsModule,
     CartItemsModule,
-    ProductDetailModule
+    ProductDetailModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],
