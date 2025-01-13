@@ -23,6 +23,11 @@ import { ProductModule } from './product/product.module';
 import { OrderItemsModule } from './order_items/order_items.module';
 import { CartItemsModule } from './cart_items/cart_items.module';
 import { ProductDetailModule } from './product_detail/product_detail.module';
+import { Address } from './addresses/models/address.model';
+import { Image } from './images/models/image.model';
+import { OtpModule } from './otp/otp.module';
+import { Otp } from './otp/models/otp.model';
+import { Client } from './client/models/client.model';
 
 @Module({
   imports: [
@@ -39,6 +44,8 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
       database: process.env.POSTGRES_DB,
       models: [
         Admin,
+        Client,
+        Otp
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -61,7 +68,8 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
     ProductModule,
     OrderItemsModule,
     CartItemsModule,
-    ProductDetailModule
+    ProductDetailModule,
+    OtpModule
   ],
   controllers: [],
   providers: [],

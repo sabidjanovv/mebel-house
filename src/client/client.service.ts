@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Client } from './models/client.model';
 
 @Injectable()
 export class ClientService {
-  create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+  constructor(@InjectModel(Client) private clientModel: typeof Client) {}
+  async findAll() {
+    const clients = await this.clientModel.findAll({ include: { all: true } });
+    return {
+      data: clients,
+      total: clients.length,
+    };
   }
 
-  findAll() {
-    return `This action returns all client`;
+  async findOne(id: number) {
+    const client = await this.clientModel.findByPk(id);
+
+    if (!client) {
+      throw new BadRequestException(
+        `client with ID: ${id} not found. (ID: ${id} bo'lgan foydalanuvchi topilmadi.)`,
+      );
+    }
+
+    return this.clientModel.findOne({ where: { id }, include: { all: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async update(id: number, updateClientDto: UpdateClientDto) {
+    const client = await this.clientModel.findByPk(id);
+    if (!client) {
+      throw new BadRequestException(`ID:${id} client does not exists!`);
+    }
+    const updatedFields = { ...updateClientDto };
+    const updatedClient = await this.clientModel.update(updatedFields, {
+      where: { id },
+      returning: true,
+    });
+    return updatedClient[1][0];
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
-  }
+  async remove(id: number) {
+    const client = await this.clientModel.findByPk(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+    if (!client) {
+      return { message: `ID: ${id} client does not exists!` };
+    }
+    await this.clientModel.destroy({ where: { id } });
+    return {
+      message: `client with ID: ${id} successfully deleted.`,
+    };
   }
 }

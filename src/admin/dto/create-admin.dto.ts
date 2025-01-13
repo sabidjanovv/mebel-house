@@ -26,7 +26,7 @@ export class CreateAdminDto {
     description: 'Admin phone number',
     example: '+998-90-123-45-67',
   })
-  @Matches(/^\+998-\d{2}-\d{3}-\d{2}-\d{2}$/, {
+  @Matches(/^\+998[0-9]{9}$/, {
     message: 'Invalid phone number format. Correct format: +998-XX-XXX-XX-XX',
   })
   phone_number: string;

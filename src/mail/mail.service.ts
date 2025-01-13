@@ -20,20 +20,20 @@ export class MailService {
     });
   }
 
-  // async sendOtp(email: string, otp: string) {
-  //   try {
-  //     await this.mailerService.sendMail({
-  //       to: email,
-  //       subject: 'Sizning OTP kodingiz',
-  //       template: './otp',
-  //       context: {
-  //         otp,
-  //       },
-  //     });
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Error sending OTP email:', error);
-  //     return false;
-  //   }
-  // }
+  async sendOtp(email: string, otp: string) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Your OTP',
+        template: './otp',
+        context: {
+          otp,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error('Error sending OTP email:', error);
+      return false;
+    }
+  }
 }
