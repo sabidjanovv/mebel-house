@@ -3,7 +3,7 @@ import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { OrderStatus } from '../models/order.model';
 
 export class CreateOrderDto {
-  @ApiProperty({ example: 1, description: "Enter order's ID" })
+  @ApiProperty({ example: 1, description: "Enter client's ID" })
   @IsNumber()
   clientId: number;
 

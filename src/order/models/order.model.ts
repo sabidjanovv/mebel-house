@@ -2,9 +2,11 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { OrderItems } from 'src/order_items/models/order_item.model';
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -66,4 +68,8 @@ export class Order extends Model<Order, IOrderCreationAttr> {
     allowNull: true,
   })
   shipping_date: Date;
+
+  @HasMany(()=>OrderItems)
+  order_items:OrderItems[]
+
 }
