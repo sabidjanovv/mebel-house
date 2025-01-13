@@ -23,6 +23,7 @@ import { ProductModule } from './product/product.module';
 import { OrderItemsModule } from './order_items/order_items.module';
 import { CartItemsModule } from './cart_items/cart_items.module';
 import { ProductDetailModule } from './product_detail/product_detail.module';
+import { Order } from './order/models/order.model';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
       models: [
-        Admin,
+        Admin,Order
       ],
       autoLoadModels: true,
       sync: { alter: true },
