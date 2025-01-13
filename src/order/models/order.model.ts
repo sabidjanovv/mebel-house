@@ -7,6 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { OrderItems } from 'src/order_items/models/order_item.model';
+import { Payment } from 'src/payment/models/payment.model';
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -69,7 +70,9 @@ export class Order extends Model<Order, IOrderCreationAttr> {
   })
   shipping_date: Date;
 
-  @HasMany(()=>OrderItems)
-  order_items:OrderItems[]
+  @HasMany(() => OrderItems)
+  order_items: OrderItems[];
 
+  @HasMany(() => Payment)
+  payments: Payment[];
 }
