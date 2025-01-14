@@ -4,6 +4,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { ClientSelfGuard } from '../common/guards/client-self.guard';
 
 @ApiTags('Client')
 @Controller('client')
@@ -18,7 +19,7 @@ export class ClientController {
     return this.clientService.findAll();
   }
 
-  // @UseGuards(UserSelfGuard)
+  @UseGuards(ClientSelfGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get a client by ID' })
   @ApiParam({ name: 'id', description: 'Client unique identifier' })
@@ -31,7 +32,7 @@ export class ClientController {
     return this.clientService.findOne(+id);
   }
 
-  // @UseGuards(UserSelfGuard)
+  @UseGuards(ClientSelfGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Client' })
   @ApiParam({ name: 'id', description: 'Client unique identifier' })
@@ -41,7 +42,7 @@ export class ClientController {
     return this.clientService.update(+id, updateClientDto);
   }
 
-  // @UseGuards(UserSelfGuard)
+  @UseGuards(ClientSelfGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a client' })
   @ApiParam({ name: 'id', description: 'Client unique identifier' })

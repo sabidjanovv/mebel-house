@@ -266,7 +266,7 @@ export class AuthService {
     const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 7);
     // const activation_link = uuid.v4();
     const updatedClient = await this.clientModel.update(
-      { hashed_refresh_token},
+      { hashed_refresh_token },
       { where: { id: newClient.id }, returning: true },
     );
 
@@ -296,7 +296,53 @@ export class AuthService {
     }
 
     const now = new Date();
-    const expiration_time = new Date(now.getTime() + 5 * 60000); // 5 minutes
+    const expiration_time = new Date(now.getTime() + 2 * 60000); // 2 minutes
+
+    await this.otpModel.destroy({ where: { email } });
+
+    const newOtp = await this.otpModel.create({
+      id: uuid.v4(),
+      otp,
+      expiration_time,
+      email,
+    });
+
+    const encodedData = Buffer.from(
+      JSON.stringify({
+        email,
+        otp_id: newOtp.id,
+        timestamp: now,
+      }),
+    ).toString('base64');
+
+    return {
+      message: `OTP code has been sent to ${email}`,
+      verification_key: encodedData,
+    };
+  }
+
+  async newOtp(email: string): Promise<{ message: string; verification_key: string }> {
+    const otp = otpGenerator.generate(4, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const client = await this.clientModel.findOne({ where: { email } });
+    if (!client) {
+      throw new BadRequestException(`Email ${email} does not exists!`);
+    } else if (client.is_active === true) {
+      throw new BadRequestException('Client already activated!');
+    }
+
+    const isSend = await this.mailService.sendOtp(email, otp);
+
+    if (!isSend) {
+      throw new BadRequestException('Error sending OTP');
+    }
+
+    const now = new Date();
+    const expiration_time = new Date(now.getTime() + 2 * 60000); // 2 minutes
 
     await this.otpModel.destroy({ where: { email } });
 
@@ -361,7 +407,7 @@ export class AuthService {
     const user = await this.clientModel.findOne({ where: { email } });
 
     return {
-      message: "OTP successfully confirmed",
+      message: 'OTP successfully confirmed',
       user: user,
     };
   }
@@ -376,7 +422,10 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
-    const validPassword = await bcrypt.compare(password, client.hashed_password);
+    const validPassword = await bcrypt.compare(
+      password,
+      client.hashed_password,
+    );
     if (!validPassword) {
       throw new UnauthorizedException("Noto'g'ri parol");
     }

@@ -6,9 +6,9 @@ import { Client } from './models/client.model';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Client]), JwtModule.register({ })],
+  imports: [SequelizeModule.forFeature([Client]), JwtModule.register({})],
   controllers: [ClientController],
   providers: [ClientService],
-  exports: [ClientService], 
+  exports: [ClientService, SequelizeModule],
 })
 export class ClientModule {}
