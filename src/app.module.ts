@@ -28,6 +28,7 @@ import { Image } from './images/models/image.model';
 import { OtpModule } from './otp/otp.module';
 import { Otp } from './otp/models/otp.model';
 import { Client } from './client/models/client.model';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -44,8 +45,6 @@ import { Client } from './client/models/client.model';
       database: process.env.POSTGRES_DB,
       models: [
         Admin,
-        Client,
-        Otp
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -68,8 +67,7 @@ import { Client } from './client/models/client.model';
     ProductModule,
     OrderItemsModule,
     CartItemsModule,
-    ProductDetailModule,
-    OtpModule
+    ProductDetailModule
   ],
   controllers: [],
   providers: [],
