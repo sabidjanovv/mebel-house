@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDetailDto } from './dto/create-product_detail.dto';
 import { UpdateProductDetailDto } from './dto/update-product_detail.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -15,15 +15,26 @@ export class ProductDetailService {
     return this.ProductDetailModel.create(createProductDetailDto);
   }
 
-  findAll() {
-    return this.ProductDetailModel.findAll({ include: { all: true } });
+  async findAll() {
+    const product_details = await this.ProductDetailModel.findAll({
+      include: { all: true },
+    });
+    return { data: product_details, total: product_details.length };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const product_detail = await this.ProductDetailModel.findByPk(id);
+    if (!product_detail) {
+      throw new BadRequestException(`ID:${id} Product Detail does not exists!`);
+    }
     return this.ProductDetailModel.findByPk(+id, { include: { all: true } });
   }
 
   async update(id: number, updateProductDetailDto: UpdateProductDetailDto) {
+    const product_detail = await this.ProductDetailModel.findByPk(id);
+    if (!product_detail) {
+      throw new BadRequestException(`ID:${id} Product Detail does not exists!`);
+    }
     const update = await this.ProductDetailModel.update(
       updateProductDetailDto,
       {
@@ -34,7 +45,11 @@ export class ProductDetailService {
     return update;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const product_detail = await this.ProductDetailModel.findByPk(id);
+    if (!product_detail) {
+      throw new BadRequestException(`ID:${id} Product Detail does not exists!`);
+    }
     return this.ProductDetailModel.destroy({ where: { id } });
   }
 }

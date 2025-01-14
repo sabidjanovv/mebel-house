@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -12,15 +12,26 @@ export class CategoryService {
     return this.categoryModel.create(createCategoryDto);
   }
 
-  findAll() {
-    return this.categoryModel.findAll({ include: { all: true } });
+  async findAll() {
+    const categorys = await this.categoryModel.findAll({
+      include: { all: true },
+    });
+    return { data: categorys, total: categorys.length };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
     return this.categoryModel.findByPk(+id, { include: { all: true } });
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
     const update = await this.categoryModel.update(updateCategoryDto, {
       where: { id },
       returning: true,
@@ -28,7 +39,11 @@ export class CategoryService {
     return update;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
     return this.categoryModel.destroy({ where: { id } });
   }
 }

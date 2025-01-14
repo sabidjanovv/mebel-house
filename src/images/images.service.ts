@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -20,15 +20,24 @@ export class ImagesService {
     });
   }
 
-  findAll() {
-    return this.imageModel.findAll({ include: { all: true } });
+  async findAll() {
+    const image = await this.imageModel.findAll({ include: { all: true } });
+    return { data: image, total: image.length };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const image = await this.imageModel.findByPk(id);
+    if (!image) {
+      throw new BadRequestException(`ID:${id} Image does not exists!`);
+    }
     return this.imageModel.findByPk(+id, { include: { all: true } });
   }
 
   async update(id: number, updateImageDto: UpdateImageDto) {
+    const image = await this.imageModel.findByPk(id);
+    if (!image) {
+      throw new BadRequestException(`ID:${id} Image does not exists!`);
+    }
     const update = await this.imageModel.update(updateImageDto, {
       where: { id },
       returning: true,
@@ -36,7 +45,11 @@ export class ImagesService {
     return update;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const image = await this.imageModel.findByPk(id);
+    if (!image) {
+      throw new BadRequestException(`ID:${id} Image does not exists!`);
+    }
     return this.imageModel.destroy({ where: { id } });
   }
 }

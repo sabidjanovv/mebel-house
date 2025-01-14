@@ -46,4 +46,11 @@ export class CreateProductDto {
   @IsOptional()
   @IsString({ message: 'Tavsif matn bo‘lishi kerak' })
   description: string;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Category unikal identifikatori',
+  })
+  @IsNumber()
+  categoryId: number;
 }
