@@ -34,7 +34,7 @@ export class Review extends Model<Review, IReviewAttr> {
   })
   @ForeignKey(() => Client)
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   clientId: number;

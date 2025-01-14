@@ -4,18 +4,18 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Wishlist } from './models/wishlist.model';
 import { Client } from '../client/models/client.model';
+import { Product } from '../product/models/product.model';
 
 @Injectable()
 export class WishlistService {
   constructor(
     @InjectModel(Wishlist) private wishlistModel: typeof Wishlist,
     @InjectModel(Client) private clientModel: typeof Client,
+    @InjectModel(Product) private productModel: typeof Product,
   ) {}
   async create(createWishlistDto: CreateWishlistDto) {
     const client = await this.clientModel.findByPk(createWishlistDto.clientId);
-    const product = await this.clientModel.findByPk(
-      createWishlistDto.productId,
-    );
+    const product = await this.productModel.findByPk(createWishlistDto.productId);
     if (!client) {
       throw new BadRequestException(
         `Client with ID: ${createWishlistDto.clientId} not found.`,
@@ -66,5 +66,4 @@ export class WishlistService {
   findOne(id: number) {
     return this.wishlistModel.findByPk(id);
   }
-
 }

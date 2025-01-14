@@ -8,6 +8,6 @@ import { Review } from './models/review.model';
   imports:[SequelizeModule.forFeature([Review])],
   controllers: [ReviewsController],
   providers: [ReviewsService],
-  
+  exports:[ReviewsService, SequelizeModule]
 })
 export class ReviewsModule {}

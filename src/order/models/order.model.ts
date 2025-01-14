@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -8,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { OrderItems } from 'src/order_items/models/order_item.model';
 import { Payment } from 'src/payment/models/payment.model';
+import { Client } from '../../client/models/client.model';
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -35,14 +37,14 @@ export class Order extends Model<Order, IOrderCreationAttr> {
   })
   id: number;
 
-  //   @ForeignKey(() => Client)
+  @ForeignKey(() => Client)
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   clientId: number;
-  //   @BelongsTo(() => Client)
-  //   client: Client;
+  @BelongsTo(() => Client)
+  client: Client;
 
   @Column({
     type: DataType.ENUM,

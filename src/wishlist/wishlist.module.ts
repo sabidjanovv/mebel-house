@@ -5,10 +5,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Wishlist } from './models/wishlist.model';
 import { JwtModule } from '@nestjs/jwt';
 import { Client } from '../client/models/client.model';
+import { Product } from '../product/models/product.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Wishlist, Client]),
+    SequelizeModule.forFeature([Wishlist, Client, Product]),
     JwtModule.register({}),
   ],
   controllers: [WishlistController],

@@ -32,6 +32,7 @@ import { OtpModule } from './otp/otp.module';
 import { Otp } from './otp/models/otp.model';
 import { Client } from './client/models/client.model';
 import { FileModule } from './file/file.module';
+import { Review } from './reviews/models/review.model';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { FileModule } from './file/file.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [Admin, Order, OrderItems, Payment],
+      models: [],
       autoLoadModels: true,
       sync: { alter: true },
       logging: false,

@@ -100,6 +100,7 @@ export class AdminService {
     const newAdmin = await this.adminModel.create({
       ...createAdminDto,
       is_creator: false, // Default to non-creator
+      is_active: false,
       hashed_password,
     });
 
