@@ -11,7 +11,30 @@ export class WishlistService {
     @InjectModel(Wishlist) private wishlistModel: typeof Wishlist,
     @InjectModel(Client) private clientModel: typeof Client,
   ) {}
-  create(createWishlistDto: CreateWishlistDto) {
+  async create(createWishlistDto: CreateWishlistDto) {
+    const client = await this.clientModel.findByPk(createWishlistDto.clientId);
+    const product = await this.clientModel.findByPk(
+      createWishlistDto.productId,
+    );
+    if (!client) {
+      throw new BadRequestException(
+        `Client with ID: ${createWishlistDto.clientId} not found.`,
+      );
+    }
+    if (!product) {
+      throw new BadRequestException(
+        `Product with ID: ${createWishlistDto.productId} not found.`,
+      );
+    }
+    const wishlist = await this.wishlistModel.findOne({
+      where: {
+        clientId: createWishlistDto.clientId,
+        productId: createWishlistDto.productId,
+      },
+    });
+    if (wishlist) {
+      await this.wishlistModel.destroy({ where: { id: wishlist.id } });
+    }
     return this.wishlistModel.create(createWishlistDto);
   }
 
@@ -24,9 +47,9 @@ export class WishlistService {
   }
 
   async findByClientId(clientId: number) {
-    const user = await this.clientModel.findByPk(clientId);
+    const client = await this.clientModel.findByPk(clientId);
 
-    if (!user) {
+    if (!client) {
       throw new BadRequestException(
         `User with ID: ${clientId} not found. (Id: ${clientId} bo'lgan foydalanuvchi topilmadi.)`,
       );
@@ -44,7 +67,4 @@ export class WishlistService {
     return this.wishlistModel.findByPk(id);
   }
 
-  async remove(id: number) {
-    return this.wishlistModel.destroy({ where: { id } });
-  }
 }

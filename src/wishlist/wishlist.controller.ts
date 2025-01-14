@@ -5,7 +5,6 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { ClientSelfLikesGuard } from '../common/guards/client-self-likes.guard';
 import { ClientSelfGuard } from '../common/guards/client-self.guard';
-import { ClientSelfLikesDeleteGuard } from '../common/guards/client-self-delete-likes.guard';
 
 @ApiTags('Wishlist') // Corrected spelling
 @Controller('wishlist')
@@ -54,19 +53,5 @@ export class WishlistController {
   @ApiResponse({ status: 404, description: 'Client not found or no likes found' })
   findByClientId(@Param('id') id: string) {
     return this.wishlistService.findByClientId(+id);
-  }
-
-  @UseGuards(ClientSelfLikesDeleteGuard)
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a like by ID (Client only)' })
-  @ApiParam({
-    name: 'id',
-    description: 'Unique identifier of the like to delete',
-  })
-  @ApiResponse({ status: 200, description: 'Like deleted successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  @ApiResponse({ status: 404, description: 'Like not found' })
-  remove(@Param('id') id: string) {
-    return this.wishlistService.remove(+id);
   }
 }

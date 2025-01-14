@@ -1,5 +1,3 @@
-
-export class Client {}
 import { Column, DataType, Model, Table, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Wishlist } from '../../wishlist/models/wishlist.model';
