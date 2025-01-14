@@ -12,7 +12,7 @@ export class OrderItemsService {
   ) {}
 
   create(createOrderItemDto: CreateOrderItemDto) {
-    return this.orderItemsModel.create(this.orderItemsModel);
+    return this.orderItemsModel.create(createOrderItemDto);
   }
 
   async findAll() {
@@ -27,10 +27,13 @@ export class OrderItemsService {
   }
 
   async update(id: number, updateOrderItemDto: UpdateOrderItemDto) {
-    const updated_orderItems = await this.orderItemsModel.update(updateOrderItemDto, {
-      where: { id },
-      returning: true,
-    });
+    const updated_orderItems = await this.orderItemsModel.update(
+      updateOrderItemDto,
+      {
+        where: { id },
+        returning: true,
+      },
+    );
     return updated_orderItems[1][0];
   }
 

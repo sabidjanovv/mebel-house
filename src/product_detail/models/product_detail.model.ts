@@ -269,6 +269,7 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   domestic_warranty: string;
 
   //
+
   @ApiProperty({
     example: 1,
     description: 'Product unikal identifikatori',
@@ -280,7 +281,10 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   })
   productId: number;
 
+  //
+
   @BelongsTo(() => Product)
   product: Product;
+
   //
 }

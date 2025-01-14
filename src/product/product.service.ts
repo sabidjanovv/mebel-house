@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -12,15 +12,26 @@ export class ProductService {
     return this.productModel.create(createProductDto);
   }
 
-  findAll() {
-    return this.productModel.findAll({ include: { all: true } });
+  async findAll() {
+    const products = await this.productModel.findAll({
+      include: { all: true },
+    });
+    return { data: products, total: products.length };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
     return this.productModel.findByPk(+id, { include: { all: true } });
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
     const update = await this.productModel.update(updateProductDto, {
       where: { id },
       returning: true,
@@ -28,7 +39,11 @@ export class ProductService {
     return update;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
     return this.productModel.destroy({ where: { id } });
   }
 }
