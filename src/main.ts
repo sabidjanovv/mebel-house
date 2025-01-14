@@ -18,7 +18,7 @@ async function start() {
 
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
-    // app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalFilters(new AllExceptionsFilter());
     // app.useGlobalPipes(new CustomValidationPipe())
 
     app.enableCors();
