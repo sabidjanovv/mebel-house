@@ -18,14 +18,13 @@ import { CookieGetter } from '../common/decorators/cookieGetter.decorator';
 import { Client } from '../client/models/client.model';
 import { CreateClientDto } from '../client/dto/create-client.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { EmailClientDto } from './dto/email-client.dto';
 // import { User } from '../user/models/user.model';
 // import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   // @UseGuards(AdminCreatorGuard)
   @Post('admin-signup')
@@ -127,6 +126,23 @@ export class AuthController {
     const refreshToken = req.cookies['refresh_token'];
 
     return this.authService.clientSignOut(refreshToken, res, +id);
+  }
+
+  @Post('newotp')
+  @ApiOperation({ summary: 'Generate a new OTP for user' })
+  @ApiResponse({ status: 200, description: 'OTP sent successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to send OTP' })
+  async newOtp(@Body() emailClientDto: EmailClientDto) {
+    if (!emailClientDto.email) {
+      throw new BadRequestException('Email is required');
+    }
+
+    try {
+      const result = await this.authService.newOtp(emailClientDto.email);
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Post('verifyotp')

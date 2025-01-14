@@ -1,5 +1,6 @@
 import { Column, DataType, Model, Table, HasMany } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { Wishlist } from '../../wishlist/models/wishlist.model';
 
 interface IClientAttr {
   full_name: string;
@@ -82,4 +83,7 @@ export class Client extends Model<Client, IClientAttr> {
     allowNull: true,
   })
   hashed_refresh_token: string;
+
+  @HasMany(()=> Wishlist)
+  wishlists: Wishlist[];
 }
