@@ -26,6 +26,12 @@ import { ProductDetailModule } from './product_detail/product_detail.module';
 import { Order } from './order/models/order.model';
 import { OrderItems } from './order_items/models/order_item.model';
 import { Payment } from './payment/models/payment.model';
+import { Address } from './addresses/models/address.model';
+import { Image } from './images/models/image.model';
+import { OtpModule } from './otp/otp.module';
+import { Otp } from './otp/models/otp.model';
+import { Client } from './client/models/client.model';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [

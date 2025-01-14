@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Review } from './models/review.model';
 
 @Injectable()
 export class ReviewsService {
-  create(createReviewDto: CreateReviewDto) {
-    return 'This action adds a new review';
+  constructor(
+    @InjectModel(Review) private readonly reviewModel: typeof Review,
+  ) {}
+  async create(createReviewDto: CreateReviewDto) {
+    return this.reviewModel.create(createReviewDto);
   }
 
-  findAll() {
-    return `This action returns all reviews`;
+  async findAll() {
+    const review = await this.reviewModel.findAll();
+    return {
+      data: review,
+      total: review.length,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
+  async findOne(id: number) {
+    const review = await this.reviewModel.findByPk(id);
+    if (!review) {
+      throw new NotFoundException(`Review with id ${id} not found.`);
+    }
+    return {
+      data: review,
+    };
   }
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
+  async update(id: number, updateReviewDto: UpdateReviewDto) {
+    const review = await this.reviewModel.findByPk(id);
+    if (!review) {
+      throw new NotFoundException(`Review with id ${id} not found.`);
+    }
+    const updatedReview = review.update(updateReviewDto);
+    return {
+      data: updatedReview,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async remove(id: number) {
+    const review = await this.reviewModel.findByPk(id);
+    if (!review) {
+      throw new NotFoundException(`Review with id ${id} not found.`);
+    }
+    await review.destroy();
+    return {
+      message: 'Review has been deleted.',
+    };
   }
 }

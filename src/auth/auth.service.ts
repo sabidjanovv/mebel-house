@@ -15,12 +15,17 @@ import { SignInDto } from './dto/admin-signin.dto';
 // import { CreateUserDto } from '../user/dto/create-user.dto';
 // import { User } from '../user/models/user.model';
 import { MailService } from '../mail/mail.service';
+import { Client } from '../client/models/client.model';
+import { CreateClientDto } from '../client/dto/create-client.dto';
+import * as otpGenerator from 'otp-generator';
+import { Otp } from '../otp/models/otp.model';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Admin) private adminModel: typeof Admin,
-    // @InjectModel(User) private userModel: typeof User,
+    @InjectModel(Client) private clientModel: typeof Client,
+    @InjectModel(Otp) private otpModel: typeof Otp,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
@@ -210,184 +215,275 @@ export class AuthService {
 
   // // ======================= USER ========================
 
-  // async generateTokenUser(user: User) {
-  //   const payload = {
-  //     id: user.id,
-  //     login: user.login,
-  //     is_active: user.is_active,
-  //     is_owner: user.is_owner,
-  //   };
+  async generateTokenClient(client: Client) {
+    const payload = {
+      id: client.id,
+      email: client.email,
+      is_active: client.is_active,
+    };
 
-  //   const [access_token, refresh_token] = await Promise.all([
-  //     this.jwtService.signAsync(payload, {
-  //       secret: process.env.ACCESS_TOKEN_KEY,
-  //       expiresIn: process.env.ACCESS_TOKEN_TIME,
-  //     }),
-  //     this.jwtService.signAsync(payload, {
-  //       secret: process.env.REFRESH_TOKEN_KEY,
-  //       expiresIn: process.env.REFRESH_TOKEN_TIME,
-  //     }),
-  //   ]);
+    const [access_token, refresh_token] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
+      }),
+    ]);
 
-  //   return { access_token, refresh_token };
-  // }
+    return { access_token, refresh_token };
+  }
 
-  // async userSignUp(createUserDto: CreateUserDto, res: Response) {
-  //   const user = await this.userModel.findOne({
-  //     where: { email: createUserDto.email },
-  //   });
-  //   const existingLogin = await this.userModel.findOne({
-  //     where: { login: createUserDto.login },
-  //   });
-  //   const existingPhone = await this.userModel.findOne({
-  //     where: { phone_number: createUserDto.phone_number },
-  //   })
+  async clientSignUp(createClientDto: CreateClientDto, res: Response) {
+    const client = await this.clientModel.findOne({
+      where: { email: createClientDto.email },
+    });
+    const existingPhone = await this.clientModel.findOne({
+      where: { phone_number: createClientDto.phone_number },
+    });
 
-  //   if (user) {
-  //     throw new BadRequestException("Bu email orqali allaqachon ro'yxattan o'tilgan");
-  //   }
-  //   if (existingLogin) {
-  //     throw new BadRequestException('Bunday login allaqachon mavjud');
-  //   }
-  //   if (existingPhone) {
-  //     throw new BadRequestException('Bunday telefon raqam allaqachon mavjud');
-  //   }
+    if (client) {
+      throw new BadRequestException(
+        "Bu email orqali allaqachon ro'yxattan o'tilgan",
+      );
+    }
+    if (existingPhone) {
+      throw new BadRequestException('Bunday telefon raqam allaqachon mavjud');
+    }
 
-  //   if (createUserDto.password !== createUserDto.confirm_password) {
-  //     throw new BadRequestException('Parollar mos emas');
-  //   }
+    if (createClientDto.password !== createClientDto.confirm_password) {
+      throw new BadRequestException('Parollar mos emas');
+    }
 
-  //   const hashed_password = await bcrypt.hash(createUserDto.password, 7);
-  //   const newUser = await this.userModel.create({
-  //     ...createUserDto,
-  //     hashed_password,
-  //   });
-  //   const tokens = await this.generateTokenUser(newUser);
-  //   const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 7);
-  //   const activation_link = uuid.v4();
-  //   const updatedUser = await this.userModel.update(
-  //     { hashed_refresh_token, activation_link },
-  //     { where: { id: newUser.id }, returning: true },
-  //   );
+    const hashed_password = await bcrypt.hash(createClientDto.password, 7);
+    const newClient = await this.clientModel.create({
+      ...createClientDto,
+      hashed_password,
+    });
+    const tokens = await this.generateTokenClient(newClient);
+    const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 7);
+    // const activation_link = uuid.v4();
+    const updatedClient = await this.clientModel.update(
+      { hashed_refresh_token },
+      { where: { id: newClient.id }, returning: true },
+    );
 
-  //   res.cookie('refresh_token', tokens.refresh_token, {
-  //     httpOnly: true,
-  //     maxAge: +process.env.REFRESH_TIME_MS,
-  //   });
+    res.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      maxAge: +process.env.REFRESH_TIME_MS,
+    });
 
-  //   try {
-  //     await this.mailService.sendMail(updatedUser[1][0]);
-  //   } catch (error) {
-  //     // console.log(error);
-  //     throw new BadRequestException('Xat yuborishda xatolik');
-  //   }
+    // try {
+    //   await this.mailService.sendOtp(updatedClient[1][0]);
+    // } catch (error) {
+    //   // console.log(error);
+    //   throw new BadRequestException('Xat yuborishda xatolik');
+    // }
+    const otp = otpGenerator.generate(4, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
 
-  //   const response = {
-  //     message:
-  //       "user tizimga muvaffaqiyatli qo'shildi, Actilashtirish uchun emailga kelgan link ustiga bosing!",
-  //     user: updatedUser[1][0],
-  //     access_token: tokens.access_token,
-  //   };
+    const email = createClientDto.email;
 
-  //   return response;
-  // }
+    const isSend = await this.mailService.sendOtp(email, otp);
 
-  // async activateUser(link: string, res: Response) {
-  //   try {
-  //     const user = await this.userModel.findOne({
-  //       where: { activation_link: link },
-  //     });
-  //     if (!user) {
-  //       return res.status(400).send({ message: 'Foydalanuvchi topilmadi!' });
-  //     }
+    if (!isSend) {
+      throw new BadRequestException('OTP yuborishda xatolik yuz berdi.');
+    }
 
-  //     if (user.is_active) {
-  //       return res
-  //         .status(400)
-  //         .send({ message: 'Foydalanuvchi allaqachon faollashtirilgan.' });
-  //     }
+    const now = new Date();
+    const expiration_time = new Date(now.getTime() + 2 * 60000); // 2 minutes
 
-  //     user.is_active = true;
-  //     await user.save();
+    await this.otpModel.destroy({ where: { email } });
 
-  //     res.send({
-  //       is_active: user.is_active,
-  //       message: 'Foydalanuvchi muvaffaqiyatli faollashtirildi.',
-  //     });
-  //   } catch (error) {
-  //     // console.log(error);
-  //   }
-  // }
+    const newOtp = await this.otpModel.create({
+      id: uuid.v4(),
+      otp,
+      expiration_time,
+      email,
+    });
 
-  // async userSignIn(userSignInDto: SignInDto, res: Response) {
-  //   const { login, password } = userSignInDto;
-  //   const user = await this.userModel.findOne({
-  //     where: { login },
-  //   });
+    const encodedData = Buffer.from(
+      JSON.stringify({
+        email,
+        otp_id: newOtp.id,
+        timestamp: now,
+      }),
+    ).toString('base64');
 
-  //   if (!user) {
-  //     throw new UnauthorizedException('user topilmadi');
-  //   }
+    return {
+      message: `OTP code has been sent to ${email}`,
+      verification_key: encodedData,
+    };
+  }
 
-  //   const validPassword = await bcrypt.compare(password, user.hashed_password);
-  //   if (!validPassword) {
-  //     throw new UnauthorizedException("Noto'g'ri parol");
-  //   }
+  async newOtp(email: string): Promise<{ message: string; verification_key: string }> {
+    const otp = otpGenerator.generate(4, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
 
-  //   const tokens = await this.generateTokenUser(user);
-  //   const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 7);
-  //   res.cookie('refresh_token', tokens.refresh_token, {
-  //     httpOnly: true,
-  //     maxAge: +process.env.REFRESH_TIME_MS,
-  //   });
+    const client = await this.clientModel.findOne({ where: { email } });
+    if (!client) {
+      throw new BadRequestException(`Email ${email} does not exists!`);
+    } else if (client.is_active === true) {
+      throw new BadRequestException('Client already activated!');
+    }
 
-  //   await this.userModel.update(
-  //     { hashed_refresh_token },
-  //     { where: { login: login } },
-  //   );
-  //   return res.json({
-  //     message: 'Tizimga muvaffaqiyatli kirildi',
-  //     access_token: tokens.access_token,
-  //   });
-  // }
+    const isSend = await this.mailService.sendOtp(email, otp);
 
-  // async userSignOut(refreshToken: string, res: Response, id: number) {
-  //   try {
-  //     const payload = await this.jwtService.verifyAsync(refreshToken, {
-  //       secret: process.env.REFRESH_TOKEN_KEY,
-  //     });
+    if (!isSend) {
+      throw new BadRequestException('Error sending OTP');
+    }
 
-  //     const user = await this.userModel.findOne({
-  //       where: { id: payload.id },
-  //     });
-  //     if (!user) {
-  //       throw new UnauthorizedException('This user not found');
-  //     }
+    const now = new Date();
+    const expiration_time = new Date(now.getTime() + 2 * 60000); // 2 minutes
 
-  //     if (Number(id) !== Number(user.id)) {
-  //       throw new BadRequestException('Invalid id or token');
-  //     }
+    await this.otpModel.destroy({ where: { email } });
 
-  //     const valid_refresh_token = await bcrypt.compare(
-  //       refreshToken,
-  //       user.hashed_refresh_token,
-  //     );
-  //     if (!valid_refresh_token) {
-  //       throw new UnauthorizedException("So'rovda xatolik");
-  //     }
+    const newOtp = await this.otpModel.create({
+      id: uuid.v4(),
+      otp,
+      expiration_time,
+      email,
+    });
 
-  //     res.clearCookie('refresh_token', {
-  //       httpOnly: true,
-  //     });
+    const encodedData = Buffer.from(
+      JSON.stringify({
+        email,
+        otp_id: newOtp.id,
+        timestamp: now,
+      }),
+    ).toString('base64');
 
-  //     await this.userModel.update(
-  //       { hashed_refresh_token: '', },
-  //       { where: { id: payload.id } },
-  //     );
+    return {
+      message: `OTP code has been sent to ${email}`,
+      verification_key: encodedData,
+    };
+  }
 
-  //     return { message: 'user success signout', id: payload.id };
-  //   } catch (error) {
-  //     throw new BadRequestException('Internal server error');
-  //   }
-  // }
+  async verifyOtp(
+    verification_key: string,
+    otp: string,
+    email: string,
+  ): Promise<any> {
+    const decodedData = JSON.parse(
+      Buffer.from(verification_key, 'base64').toString('ascii'),
+    );
+
+    if (decodedData.email !== email) {
+      throw new BadRequestException('Bu email uchun OTP yuborilmagan.');
+    }
+
+    const otpRecord = await this.otpModel.findOne({
+      where: { id: decodedData.otp_id },
+    });
+
+    if (!otpRecord) {
+      throw new BadRequestException('OTP mavjud emas.');
+    }
+
+    if (otpRecord.verified) {
+      throw new BadRequestException('Bu OTP avval tekshirilgan.');
+    }
+
+    if (otpRecord.expiration_time < new Date()) {
+      throw new BadRequestException('OTPning vaqti tugagan.');
+    }
+
+    if (otpRecord.otp !== otp) {
+      throw new BadRequestException('OTP mos emas.');
+    }
+
+    await this.otpModel.update({ verified: true }, { where: { email } });
+
+    await this.clientModel.update({ is_active: true }, { where: { email } });
+
+    const user = await this.clientModel.findOne({ where: { email } });
+
+    return {
+      message: 'OTP successfully confirmed',
+      user: user,
+    };
+  }
+
+  async clientSignIn(clientSignInDto: SignInDto, res: Response) {
+    const { email, password } = clientSignInDto;
+    const client = await this.clientModel.findOne({
+      where: { email },
+    });
+
+    if (!client) {
+      throw new UnauthorizedException('client topilmadi');
+    }
+
+    const validPassword = await bcrypt.compare(
+      password,
+      client.hashed_password,
+    );
+    if (!validPassword) {
+      throw new UnauthorizedException("Noto'g'ri parol");
+    }
+
+    const tokens = await this.generateTokenClient(client);
+    const hashed_refresh_token = await bcrypt.hash(tokens.refresh_token, 7);
+    res.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      maxAge: +process.env.REFRESH_TIME_MS,
+    });
+
+    await this.clientModel.update(
+      { hashed_refresh_token },
+      { where: { email: email } },
+    );
+    return res.json({
+      message: 'Tizimga muvaffaqiyatli kirildi',
+      access_token: tokens.access_token,
+    });
+  }
+
+  async clientSignOut(refreshToken: string, res: Response, id: number) {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+
+      const client = await this.clientModel.findOne({
+        where: { id: payload.id },
+      });
+      if (!client) {
+        throw new UnauthorizedException('This client not found');
+      }
+
+      if (Number(id) !== Number(client.id)) {
+        throw new BadRequestException('Invalid id or token');
+      }
+
+      const valid_refresh_token = await bcrypt.compare(
+        refreshToken,
+        client.hashed_refresh_token,
+      );
+      if (!valid_refresh_token) {
+        throw new UnauthorizedException("So'rovda xatolik");
+      }
+
+      res.clearCookie('refresh_token', {
+        httpOnly: true,
+      });
+
+      await this.clientModel.update(
+        { hashed_refresh_token: '' },
+        { where: { id: payload.id } },
+      );
+
+      return { message: 'client success signout', id: payload.id };
+    } catch (error) {
+      throw new BadRequestException('Internal server error');
+    }
+  }
 }
