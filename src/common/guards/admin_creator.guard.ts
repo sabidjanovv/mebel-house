@@ -5,8 +5,8 @@ import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
-} from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AdminCreatorGuard implements CanActivate {
@@ -17,39 +17,37 @@ export class AdminCreatorGuard implements CanActivate {
     const authHeaders = req.headers.authorization;
 
     if (!authHeaders) {
-      throw new UnauthorizedException("Unauthorized user");
+      throw new UnauthorizedException('Unauthorized user');
     }
 
-    const bearer = authHeaders.split(" ")[0];
-    const token = authHeaders.split(" ")[1];
+    const bearer = authHeaders.split(' ')[0];
+    const token = authHeaders.split(' ')[1];
 
-    if (bearer !== "Bearer" || !token) {
-      throw new UnauthorizedException("Unauthorized user");
+    if (bearer !== 'Bearer' || !token) {
+      throw new UnauthorizedException('Unauthorized user');
     }
 
     let payload: any;
     try {
       payload = await this.jwtService.verify(token, {
-        secret: process.env.ACCESS_TOKEN_KEY,
+        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
       });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
 
     if (!payload) {
-      throw new UnauthorizedException("Unauthorized user");
+      throw new UnauthorizedException('Unauthorized user');
     }
 
-    if(payload.is_active !== true){
-        throw new ForbiddenException("Admin active emas!");
-    }
-
-    if(payload.is_admin !== true){
-      throw new ForbiddenException("Sizda bunday huquq yo'q!");
+    if (payload.is_active !== true) {
+      throw new ForbiddenException('Admin active emas!');
     }
 
     if (payload.is_creator !== true) {
-      throw new ForbiddenException("Sizda bunday huquq yo'q, Siz craeator emassiz!");
+      throw new ForbiddenException(
+        "Sizda bunday huquq yo'q, Siz craeator emassiz!",
+      );
     }
 
     return true;

@@ -54,7 +54,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Refresh token to update credentials' })
-  @Post('/refreshToken/:id')
+  @Post('/refreshToken-admin/:id')
   async refreshToken(
     @Param('id') id: number,
     @CookieGetter('refresh_token') refresh_token: string,
@@ -168,5 +168,15 @@ export class AuthController {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  @ApiOperation({ summary: "Client's Refresh token to update credentials" })
+  @Post('/refreshToken/:id')
+  async refreshTokenClient(
+    @Param('id') id: number,
+    @CookieGetter('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.refreshTokenClient(id, refresh_token, res);
   }
 }

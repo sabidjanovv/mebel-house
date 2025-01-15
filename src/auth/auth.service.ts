@@ -34,11 +34,11 @@ export class AuthService {
   async generateToken(payload: any) {
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: process.env.ACCESS_TOKEN_KEY,
+        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
         expiresIn: process.env.ACCESS_TOKEN_TIME,
       }),
       this.jwtService.signAsync(payload, {
-        secret: process.env.REFRESH_TOKEN_KEY,
+        secret: process.env.ADMIN_REFRESH_TOKEN_KEY,
         expiresIn: process.env.REFRESH_TOKEN_TIME,
       }),
     ]);
@@ -50,20 +50,20 @@ export class AuthService {
   async refreshToken(id: number, refresh_token: string, res: Response) {
     try {
       const verified_token = await this.jwtService.verify(refresh_token, {
-        secret: process.env.REFRESH_TOKEN_KEY,
+        secret: process.env.ADMIN_REFRESH_TOKEN_KEY,
       });
 
       if (!verified_token || id != verified_token.id) {
         throw new ForbiddenException('Forbidden or invalid refresh token');
       }
 
-      const payload = { id: verified_token.id, login: verified_token.login };
+      const payload = { id: verified_token.id, email: verified_token.email };
       const token = this.jwtService.sign(payload, {
-        secret: process.env.ACCESS_TOKEN_KEY,
+        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
         expiresIn: process.env.ACCESS_TOKEN_TIME,
       });
 
-      return { access_token: token };
+      return { id: id, access_token: token };
     } catch (error) {
       throw new BadRequestException('Error refreshing token');
     }
@@ -94,6 +94,7 @@ export class AuthService {
     const newAdmin = await this.adminModel.create({
       ...createAdminDto,
       is_creator: isCreator,
+      is_active: false,
       hashed_password,
     });
 
@@ -101,7 +102,6 @@ export class AuthService {
       id: newAdmin.id,
       email: newAdmin.email,
       is_active: newAdmin.is_active,
-      is_admin: newAdmin.is_admin,
       is_creator: newAdmin.is_creator,
     });
 
@@ -149,7 +149,6 @@ export class AuthService {
       id: admin.id,
       email: admin.email,
       is_active: admin.is_active,
-      is_admin: admin.is_admin,
       is_creator: admin.is_creator,
     });
 
@@ -163,6 +162,7 @@ export class AuthService {
 
     return res.json({
       message: 'Admin signed in successfully',
+      id: admin.id,
       access_token: tokens.access_token,
     });
   }
@@ -213,7 +213,7 @@ export class AuthService {
     }
   }
 
-  // // ======================= USER ========================
+  // // ======================= CLIENT ========================
 
   async generateTokenClient(client: Client) {
     const payload = {
@@ -321,7 +321,9 @@ export class AuthService {
     };
   }
 
-  async newOtp(email: string): Promise<{ message: string; verification_key: string }> {
+  async newOtp(
+    email: string,
+  ): Promise<{ message: string; verification_key: string }> {
     const otp = otpGenerator.generate(4, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
@@ -443,6 +445,7 @@ export class AuthService {
     );
     return res.json({
       message: 'Tizimga muvaffaqiyatli kirildi',
+      id: client.id,
       access_token: tokens.access_token,
     });
   }
@@ -484,6 +487,29 @@ export class AuthService {
       return { message: 'client success signout', id: payload.id };
     } catch (error) {
       throw new BadRequestException('Internal server error');
+    }
+  }
+
+  //===================== REFRESH TOKEN ======================
+  async refreshTokenClient(id: number, refresh_token: string, res: Response) {
+    try {
+      const verified_token = await this.jwtService.verify(refresh_token, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+      });
+
+      if (!verified_token || id != verified_token.id) {
+        throw new ForbiddenException('Forbidden or invalid refresh token');
+      }
+
+      const payload = { id: verified_token.id, email: verified_token.email };
+      const token = this.jwtService.sign(payload, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      });
+
+      return { id: id, access_token: token };
+    } catch (error) {
+      throw new BadRequestException('Error refreshing token');
     }
   }
 }

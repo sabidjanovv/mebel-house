@@ -30,16 +30,15 @@ export class AdminService {
       email: admin.email,
       is_active: admin.is_active,
       is_creator: admin.is_creator,
-      is_admin: admin.is_admin,
     };
 
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: process.env.ACCESS_TOKEN_KEY,
+        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
         expiresIn: process.env.ACCESS_TOKEN_TIME,
       }),
       this.jwtService.signAsync(payload, {
-        secret: process.env.REFRESH_TOKEN_KEY,
+        secret: process.env.ADMIN_REFRESH_TOKEN_KEY,
         expiresIn: process.env.REFRESH_TOKEN_TIME,
       }),
     ]);
@@ -47,29 +46,29 @@ export class AdminService {
     return { access_token, refresh_token };
   }
 
-  async refreshToken(id: number, refresh_token: string, res: Response) {
-    try {
-      const verified_token = await this.jwtService.verify(refresh_token, {
-        secret: process.env.REFRESH_TOKEN_KEY,
-      });
-      if (!verified_token) {
-        throw new UnauthorizedException('Unauthorized token');
-      }
-      if (id != verified_token.id) {
-        throw new ForbiddenException('Forbidden admin');
-      }
-      const payload = { id: verified_token.id, login: verified_token.login };
-      const token = this.jwtService.sign(payload, {
-        secret: process.env.ACCESS_TOKEN_KEY,
-        expiresIn: process.env.ACCESS_TOKEN_TIME,
-      });
-      return {
-        token,
-      };
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
+  // async refreshToken(id: number, refresh_token: string, res: Response) {
+  //   try {
+  //     const verified_token = await this.jwtService.verify(refresh_token, {
+  //       secret: process.env.ADMIN_REFRESH_TOKEN_KEY,
+  //     });
+  //     if (!verified_token) {
+  //       throw new UnauthorizedException('Unauthorized token');
+  //     }
+  //     if (id != verified_token.id) {
+  //       throw new ForbiddenException('Forbidden admin');
+  //     }
+  //     const payload = { id: verified_token.id, login: verified_token.login };
+  //     const token = this.jwtService.sign(payload, {
+  //       secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
+  //       expiresIn: process.env.ACCESS_TOKEN_TIME,
+  //     });
+  //     return {
+  //       token,
+  //     };
+  //   } catch (error) {
+  //     throw new BadRequestException(error);
+  //   }
+  // }
 
   async create(createAdminDto: CreateAdminDto, res: Response) {
     // Check if the email or phone number already exists
@@ -110,7 +109,6 @@ export class AdminService {
       id: newAdmin.id,
       email: newAdmin.email,
       is_active: newAdmin.is_active,
-      is_admin: newAdmin.is_admin,
       is_creator: newAdmin.is_creator,
     });
 

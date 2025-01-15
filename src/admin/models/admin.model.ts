@@ -79,16 +79,6 @@ export class Admin extends Model<Admin, IAdminAttr> {
   is_active: boolean;
 
   @ApiProperty({
-    example: true,
-    description: 'Indicates whether the user is an admin',
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  is_admin: boolean;
-
-  @ApiProperty({
     example: false,
     description: 'Indicates whether the user is the creator of the system',
   })

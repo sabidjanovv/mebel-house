@@ -4,6 +4,7 @@ import { Wishlist } from '../../wishlist/models/wishlist.model';
 import { Review } from '../../reviews/models/review.model';
 import { Order } from '../../order/models/order.model';
 import { Cart } from '../../cart/models/cart.model';
+import { Address } from 'src/addresses/models/address.model';
 
 interface IClientAttr {
   full_name: string;
@@ -98,4 +99,7 @@ export class Client extends Model<Client, IClientAttr> {
 
   @HasMany(() => Cart)
   carts: Cart[];
+
+  @HasMany(() => Address)
+  addresses: Address[];
 }

@@ -40,25 +40,25 @@ export class AdminController {
     return this.adminService.create(createAdminDto, res);
   }
 
-  @Post('refresh/:id')
-  @ApiOperation({ summary: 'Refresh access token using refresh token' })
-  @ApiParam({ name: 'id', description: 'Admin unique identifier' })
-  @ApiResponse({
-    status: 200,
-    description: 'New access token generated successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
-  refresh(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const refresh_token = req.cookies?.refresh_token;
-    if (!refresh_token) {
-      throw new UnauthorizedException('Refresh token is missing');
-    }
-    return this.adminService.refreshToken(+id, refresh_token, res);
-  }
+  // @Post('refresh/:id')
+  // @ApiOperation({ summary: 'Refresh access token using refresh token' })
+  // @ApiParam({ name: 'id', description: 'Admin unique identifier' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'New access token generated successfully',
+  // })
+  // @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
+  // refresh(
+  //   @Param('id') id: string,
+  //   @Req() req: Request,
+  //   @Res({ passthrough: true }) res: Response,
+  // ) {
+  //   const refresh_token = req.cookies?.refresh_token;
+  //   if (!refresh_token) {
+  //     throw new UnauthorizedException('Refresh token is missing');
+  //   }
+  //   return this.adminService.refreshToken(+id, refresh_token, res);
+  // }
 
   @UseGuards(AdminCreatorGuard)
   @Get()

@@ -30,7 +30,7 @@ export class AdminGuard implements CanActivate {
     let payload: any;
     try {
       payload = await this.jwtService.verify(token, {
-        secret: process.env.ACCESS_TOKEN_KEY,
+        secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
       });
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -38,10 +38,6 @@ export class AdminGuard implements CanActivate {
 
     if (!payload) {
       throw new UnauthorizedException('Unauthorized user');
-    }
-
-    if (payload.is_admin !== true) {
-      throw new ForbiddenException('Siz admin emassiz!');
     }
 
     if (payload.is_active !== true) {
