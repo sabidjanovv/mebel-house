@@ -45,7 +45,8 @@ export class CreateAdminDto {
   })
   confirm_password: string;
 
-  @ApiProperty({ description: 'Admin active status', default: true })
-  @IsBoolean({ message: "Active status must be 'true' or 'false'" })
-  is_active?: boolean;
+  // @ApiProperty({ description: 'Admin active status', default: true })
+  // @IsBoolean({ message: "Active status must be 'true' or 'false'" })
+  // is_active?: boolean;
+  is_creator?: boolean;
 }

@@ -53,4 +53,11 @@ export class CreateProductDto {
   })
   @IsNumber()
   categoryId: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Maxsulot soni',
+  })
+  @IsNumber()
+  stock:number;
 }

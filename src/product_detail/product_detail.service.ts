@@ -27,7 +27,10 @@ export class ProductDetailService {
     if (!product_detail) {
       throw new BadRequestException(`ID:${id} Product Detail does not exists!`);
     }
-    return this.ProductDetailModel.findByPk(+id, { include: { all: true } });
+    const productDetail = this.ProductDetailModel.findByPk(+id, {
+      include: { all: true },
+    });
+    return productDetail
   }
 
   async update(id: number, updateProductDetailDto: UpdateProductDetailDto) {
@@ -42,7 +45,7 @@ export class ProductDetailService {
         returning: true,
       },
     );
-    return update;
+    return update[1][0];
   }
 
   async remove(id: number) {
@@ -50,6 +53,7 @@ export class ProductDetailService {
     if (!product_detail) {
       throw new BadRequestException(`ID:${id} Product Detail does not exists!`);
     }
-    return this.ProductDetailModel.destroy({ where: { id } });
+    await this.ProductDetailModel.destroy({ where: { id } });
+    return { message: `ID: ${id} Product Detail successfully deleted!` };
   }
 }

@@ -15,6 +15,7 @@ import { Image } from '../../images/models/image.model';
 import { OrderItems } from '../../order_items/models/order_item.model';
 import { CartItems } from '../../cart_items/models/cart_item.model';
 import { Review } from '../../reviews/models/review.model';
+import { Wishlist } from '../../wishlist/models/wishlist.model';
 
 interface ICreationProductAttr {
   name: string;
@@ -106,16 +107,19 @@ export class Product extends Model<Product, ICreationProductAttr> {
 
   @HasOne(() => ProductDetail)
   productDetail: ProductDetail;
- 
+
   @HasMany(() => Image)
   images: Image[];
 
-  @HasMany(() =>OrderItems)
+  @HasMany(() => OrderItems)
   orderItems: OrderItems[];
 
-  @HasMany(()=> CartItems)
+  @HasMany(() => CartItems)
   cartItems: CartItems[];
 
   @HasMany(() => Review)
   reviews: Review[];
+
+  @HasMany(() => Wishlist)
+  wishlists: Wishlist[];
 }

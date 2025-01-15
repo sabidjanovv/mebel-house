@@ -14,7 +14,7 @@ export class ReviewsService {
   }
 
   async findAll() {
-    const review = await this.reviewModel.findAll();
+    const review = await this.reviewModel.findAll({ include: { all: true } });
     return {
       data: review,
       total: review.length,
@@ -22,7 +22,9 @@ export class ReviewsService {
   }
 
   async findOne(id: number) {
-    const review = await this.reviewModel.findByPk(id);
+    const review = await this.reviewModel.findByPk(+id, {
+      include: { all: true },
+    });
     if (!review) {
       throw new NotFoundException(`Review with id ${id} not found.`);
     }
@@ -36,10 +38,12 @@ export class ReviewsService {
     if (!review) {
       throw new NotFoundException(`Review with id ${id} not found.`);
     }
-    const updatedReview = review.update(updateReviewDto);
-    return {
-      data: updatedReview,
-    };
+    const updatedReview = review.update({
+      ...updateReviewDto,
+      clientId: review.clientId,
+      productId: review.productId,
+    });
+    return updatedReview;
   }
 
   async remove(id: number) {
@@ -47,9 +51,10 @@ export class ReviewsService {
     if (!review) {
       throw new NotFoundException(`Review with id ${id} not found.`);
     }
-    await review.destroy();
+    await this.reviewModel.destroy({ where: { id } });
     return {
-      message: 'Review has been deleted.',
+      id,
+      message: `ID: ${id} Review has been deleted.`,
     };
   }
 }
