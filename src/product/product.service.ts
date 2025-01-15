@@ -1,8 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+// Updated product.service.ts
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Product } from './models/product.model';
+import { Op } from 'sequelize';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Injectable()
 export class ProductService {
@@ -12,40 +19,64 @@ export class ProductService {
     return this.productModel.create(createProductDto);
   }
 
-  async findAll() {
-    const products = await this.productModel.findAll({
-      include: { all: true },
-    });
-    return { data: products, total: products.length };
+  async findAll(query: PaginationDto) {
+    const { filter, order = 'asc', page = 1, limit = 10 } = query;
+
+    const offset = (page - 1) * limit; // Sequelize uses offset instead of skip
+
+    // Build dynamic where clause for filtering
+    const where = filter
+      ? {
+          [Op.or]: [
+            { name: { [Op.like]: `%${filter}%` } },
+            { description: { [Op.like]: `%${filter}%` } },
+          ],
+        }
+      : {};
+
+    const { rows: data, count: total } =
+      await this.productModel.findAndCountAll({
+        where,
+        order: [['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
+        offset,
+        limit,
+      });
+
+    return {
+      data,
+      page,
+      limit,
+      total,
+    };
   }
 
   async findOne(id: number) {
-    const existingProduct = await this.productModel.findByPk(id);
-    if (!existingProduct) {
-      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    const product = await this.productModel.findByPk(id, {
+      include: { all: true },
+    });
+    if (!product) {
+      throw new NotFoundException(`ID:${id} Product does not exist!`);
     }
-    const product = this.productModel.findByPk(+id, { include: { all: true } });
-    return product
+    return product;
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
     const product = await this.productModel.findByPk(id);
     if (!product) {
-      throw new BadRequestException(`ID:${id} Product does not exists!`);
+      throw new NotFoundException(`ID:${id} Product does not exist!`);
     }
-    const update = await this.productModel.update(updateProductDto, {
+    await this.productModel.update(updateProductDto, {
       where: { id },
-      returning: true,
     });
-    return update[1][0];
+    return this.productModel.findByPk(id); // Return the updated product
   }
 
   async remove(id: number) {
     const product = await this.productModel.findByPk(id);
     if (!product) {
-      throw new BadRequestException(`ID:${id} Product does not exists!`);
+      throw new NotFoundException(`ID:${id} Product does not exist!`);
     }
-    this.productModel.destroy({ where: { id } });
+    await this.productModel.destroy({ where: { id } });
     return { id, message: `ID: ${id} Product successfully deleted!` };
   }
 }

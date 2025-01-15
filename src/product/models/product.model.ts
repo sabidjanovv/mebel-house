@@ -23,6 +23,7 @@ interface ICreationProductAttr {
   discount: number;
   description: string;
   categoryId: number;
+  stock: number;
 }
 
 @Table({ tableName: 'product' })
