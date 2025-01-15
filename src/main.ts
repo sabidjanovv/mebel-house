@@ -14,10 +14,10 @@ async function start() {
     const app = await NestFactory.create(AppModule, {
       logger: WinstonModule.createLogger(winstonConfig),
     });
+    app.setGlobalPrefix('api');
     app.use(cookieParser());
 
     app.useGlobalPipes(new ValidationPipe());
-    app.setGlobalPrefix('api');
     app.useGlobalFilters(new AllExceptionsFilter());
     // app.useGlobalPipes(new CustomValidationPipe())
 
