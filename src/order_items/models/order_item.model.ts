@@ -7,6 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Order } from 'src/order/models/order.model';
+import { Product } from '../../product/models/product.model';
 
 interface IOrderItemsCreationAttr {
   orderId: number;
@@ -34,14 +35,14 @@ export class OrderItems extends Model<OrderItems, IOrderItemsCreationAttr> {
   @BelongsTo(() => Order)
   orders: Order;
 
-  //   @ForeignKey(() => Product)
+  @ForeignKey(() => Product)
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   productId: number;
-  //   @BelongsTo(() => Product)
-  //   product: Product;
+  @BelongsTo(() => Product)
+  product: Product;
 
   @Column({
     type: DataType.INTEGER,

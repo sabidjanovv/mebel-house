@@ -4,6 +4,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -11,6 +12,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProductDetail } from '../../product_detail/models/product_detail.model';
 import { Category } from '../../category/models/category.model';
 import { Image } from '../../images/models/image.model';
+import { OrderItems } from '../../order_items/models/order_item.model';
+import { CartItems } from '../../cart_items/models/cart_item.model';
+import { Review } from '../../reviews/models/review.model';
 
 interface ICreationProductAttr {
   name: string;
@@ -32,6 +36,20 @@ export class Product extends Model<Product, ICreationProductAttr> {
     autoIncrement: true,
   })
   id: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Category unikal identifikatori',
+  })
+  @ForeignKey(() => Category)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  categoryId: number;
+
+  @BelongsTo(() => Category)
+  category: Category;
 
   @ApiProperty({
     description: 'Mahsulotning nomi',
@@ -75,29 +93,29 @@ export class Product extends Model<Product, ICreationProductAttr> {
   })
   description: string;
 
-  //
-  @HasMany(() => ProductDetail)
-  productDetail: ProductDetail;
-  //
-
-  //
-  @HasMany(() => Image)
-  image: Image;
-  //
-
-  //
   @ApiProperty({
-    example: 1,
-    description: 'Category unikal identifikatori',
+    description: 'Chegirma foizda (%), 0 dan 100 gacha',
+    example: 10,
+    required: false,
   })
-  @ForeignKey(() => Category)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  categoryId: number;
+  stock: number;
 
-  @BelongsTo(() => Category)
-  category: Category;
-  //
+  @HasOne(() => ProductDetail)
+  productDetail: ProductDetail;
+ 
+  @HasMany(() => Image)
+  images: Image[];
+
+  @HasMany(() =>OrderItems)
+  orderItems: OrderItems[];
+
+  @HasMany(()=> CartItems)
+  cartItems: CartItems[];
+
+  @HasMany(() => Review)
+  reviews: Review[];
 }
