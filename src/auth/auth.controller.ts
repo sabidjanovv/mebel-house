@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, Param, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Param,
+  Req,
+  Get,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Admin } from '../admin/models/admin.model';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -6,6 +15,10 @@ import { CreateAdminDto } from '../admin/dto/create-admin.dto';
 import { Response, Request } from 'express';
 import { SignInDto } from './dto/admin-signin.dto';
 import { CookieGetter } from '../common/decorators/cookieGetter.decorator';
+import { Client } from '../client/models/client.model';
+import { CreateClientDto } from '../client/dto/create-client.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { EmailClientDto } from './dto/email-client.dto';
 // import { User } from '../user/models/user.model';
 // import { CreateUserDto } from '../user/dto/create-user.dto';
 
@@ -73,51 +86,87 @@ export class AuthController {
   }
 
   //   // ========================== USER =========================
-  //   @Post('user-signup')
-  //   @ApiOperation({ summary: "Yangi user qo'shish" })
-  //   @ApiResponse({
-  //     status: 201,
-  //     description: 'Create user',
-  //     type: User,
-  //   })
-  //   async userSignUp(
-  //     @Body() createUserDto: CreateUserDto,
-  //     @Res() res: Response,
-  //   ) {
-  //     const result = await this.authService.userSignUp(createUserDto, res);
-  //     return res.status(201).json(result);
-  //   }
+  @Post('client-signup')
+  @ApiOperation({ summary: "Yangi client qo'shish" })
+  @ApiResponse({
+    status: 201,
+    description: 'Create client',
+    type: Client,
+  })
+  async clientSignUp(
+    @Body() createClientDto: CreateClientDto,
+    @Res() res: Response,
+  ) {
+    const result = await this.authService.clientSignUp(createClientDto, res);
+    return res.status(201).json(result);
+  }
 
-  //   @ApiOperation({ summary: 'Userni aktivlashtirish uchun link' })
-  //   @Get('activate/:link')
-  //   activateUser(@Param('link') link: string, @Res() res: Response) {
-  //     return this.authService.activateUser(link, res);
-  //   }
+  @Post('client-signin')
+  @ApiOperation({ summary: 'client tizimga kirish' })
+  @ApiResponse({
+    status: 200,
+    description: 'client signin',
+    type: Client,
+  })
+  async clientSignIn(@Body() clientSignInDto: SignInDto, @Res() res: Response) {
+    return this.authService.clientSignIn(clientSignInDto, res);
+  }
 
-  //   @Post('user-signin')
-  //   @ApiOperation({ summary: 'user tizimga kirish' })
-  //   @ApiResponse({
-  //     status: 200,
-  //     description: 'user signin',
-  //     type: User,
-  //   })
-  //   async userSignIn(@Body() userSignInDto: SignInDto, @Res() res: Response) {
-  //     return this.authService.userSignIn(userSignInDto, res);
-  //   }
+  @Post('client-signout/:id')
+  @ApiOperation({ summary: 'client tizimdan chiqishi' })
+  @ApiResponse({
+    status: 200,
+    description: 'client signout',
+  })
+  async clientSignOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Param('id') id: string, // Correct usage of decorator
+  ) {
+    const refreshToken = req.cookies['refresh_token'];
 
-  //   @Post('user-signout/:id')
-  //   @ApiOperation({ summary: 'user tizimdan chiqishi' })
-  //   @ApiResponse({
-  //     status: 200,
-  //     description: 'user signout',
-  //   })
-  //   async userSignOut(
-  //     @Req() req: Request,
-  //     @Res({ passthrough: true }) res: Response,
-  //     @Param('id') id: string, // Correct usage of decorator
-  //   ) {
-  //     const refreshToken = req.cookies['refresh_token'];
+    return this.authService.clientSignOut(refreshToken, res, +id);
+  }
 
-  //     return this.authService.userSignOut(refreshToken, res, +id);
-  //   }
+  @Post('newotp')
+  @ApiOperation({ summary: 'Generate a new OTP for user' })
+  @ApiResponse({ status: 200, description: 'OTP sent successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to send OTP' })
+  async newOtp(@Body() emailClientDto: EmailClientDto) {
+    if (!emailClientDto.email) {
+      throw new BadRequestException('Email is required');
+    }
+
+    try {
+      const result = await this.authService.newOtp(emailClientDto.email);
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Post('verifyotp')
+  @ApiOperation({ summary: 'Verify the OTP for user' })
+  @ApiResponse({ status: 200, description: 'OTP verified successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to verify OTP' })
+  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    const { email, otp, verification_key } = verifyOtpDto;
+
+    if (!email || !otp || !verification_key) {
+      throw new BadRequestException(
+        'Email, OTP, and verification key are required',
+      );
+    }
+
+    try {
+      const result = await this.authService.verifyOtp(
+        verification_key,
+        otp,
+        email,
+      );
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }

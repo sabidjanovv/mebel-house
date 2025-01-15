@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Product } from './models/product.model';
 
 @Injectable()
 export class ProductService {
+  constructor(@InjectModel(Product) private productModel: typeof Product) {}
+
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    return this.productModel.create(createProductDto);
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll() {
+    const products = await this.productModel.findAll({
+      include: { all: true },
+    });
+    return { data: products, total: products.length };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
+    return this.productModel.findByPk(+id, { include: { all: true } });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
+    const update = await this.productModel.update(updateProductDto, {
+      where: { id },
+      returning: true,
+    });
+    return update;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new BadRequestException(`ID:${id} Product does not exists!`);
+    }
+    return this.productModel.destroy({ where: { id } });
   }
 }

@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Cart } from './models/cart.model';
+import { Client } from '../client/models/client.model';
 
 @Injectable()
 export class CartService {
-  create(createCartDto: CreateCartDto) {
-    return 'This action adds a new cart';
+  constructor(
+    @InjectModel(Cart) private readonly cartModel: typeof Cart,
+    @InjectModel(Client) private readonly clientModel: typeof Client,
+  ) {}
+  async create(createCartDto: CreateCartDto) {
+    const client = await this.clientModel.findByPk(createCartDto.clientId);
+    if (!client) {
+      throw new NotFoundException(`Client with ID: ${createCartDto.clientId} not found.`);
+    }
+    return await this.cartModel.create(createCartDto);
   }
 
-  findAll() {
-    return `This action returns all cart`;
+  async findAll() {
+    const carts = await this.cartModel.findAll({ include: { all: true } });
+    return { data: carts, total: carts.length };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+  async findOne(id: number) {
+    const cart = await this.cartModel.findByPk(id);
+    if (!cart) {
+      throw new NotFoundException(`Cart with ID: ${id} not found.`);
+    }
+    return {
+      data: cart,
+    }
   }
 
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
+  async update(id: number, updateCartDto: UpdateCartDto) {
+    const cart = await this.cartModel.findByPk(id);
+    if (!cart) {
+      throw new NotFoundException(`Cart with ID: ${id} not found.`);
+    }
+    const updatedCart = await cart.update(updateCartDto);
+    return {
+      data: updatedCart,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+  async remove(id: number) {
+    const cart = await this.cartModel.findByPk(id);
+    if (!cart) {
+      throw new NotFoundException(`Cart with ID: ${id} not found.`);
+    }
+    await cart.destroy();
+    return {
+      message: 'Cart deleted successfully.',
+    };
   }
 }

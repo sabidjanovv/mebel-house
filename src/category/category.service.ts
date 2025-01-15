@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Category } from './models/category.model';
 
 @Injectable()
 export class CategoryService {
+  constructor(@InjectModel(Category) private categoryModel: typeof Category) {}
+
   create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+    return this.categoryModel.create(createCategoryDto);
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    const categorys = await this.categoryModel.findAll({
+      include: { all: true },
+    });
+    return { data: categorys, total: categorys.length };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
+    return this.categoryModel.findByPk(+id, { include: { all: true } });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
+    const update = await this.categoryModel.update(updateCategoryDto, {
+      where: { id },
+      returning: true,
+    });
+    return update;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const category = await this.categoryModel.findByPk(id);
+    if (!category) {
+      throw new BadRequestException(`ID:${id} Category does not exists!`);
+    }
+    return this.categoryModel.destroy({ where: { id } });
   }
 }

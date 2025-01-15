@@ -1,26 +1,69 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Wishlist } from './models/wishlist.model';
+import { Client } from '../client/models/client.model';
+import { Product } from '../product/models/product.model';
 
 @Injectable()
 export class WishlistService {
-  create(createWishlistDto: CreateWishlistDto) {
-    return 'This action adds a new wishlist';
+  constructor(
+    @InjectModel(Wishlist) private wishlistModel: typeof Wishlist,
+    @InjectModel(Client) private clientModel: typeof Client,
+    @InjectModel(Product) private productModel: typeof Product,
+  ) {}
+  async create(createWishlistDto: CreateWishlistDto) {
+    const client = await this.clientModel.findByPk(createWishlistDto.clientId);
+    const product = await this.productModel.findByPk(createWishlistDto.productId);
+    if (!client) {
+      throw new BadRequestException(
+        `Client with ID: ${createWishlistDto.clientId} not found.`,
+      );
+    }
+    if (!product) {
+      throw new BadRequestException(
+        `Product with ID: ${createWishlistDto.productId} not found.`,
+      );
+    }
+    const wishlist = await this.wishlistModel.findOne({
+      where: {
+        clientId: createWishlistDto.clientId,
+        productId: createWishlistDto.productId,
+      },
+    });
+    if (wishlist) {
+      await this.wishlistModel.destroy({ where: { id: wishlist.id } });
+    }
+    return this.wishlistModel.create(createWishlistDto);
   }
 
-  findAll() {
-    return `This action returns all wishlist`;
+  async findAll() {
+    const wishes = await this.wishlistModel.findAll();
+    return {
+      data: wishes,
+      total: wishes.length,
+    };
+  }
+
+  async findByClientId(clientId: number) {
+    const client = await this.clientModel.findByPk(clientId);
+
+    if (!client) {
+      throw new BadRequestException(
+        `User with ID: ${clientId} not found. (Id: ${clientId} bo'lgan foydalanuvchi topilmadi.)`,
+      );
+    }
+    const wishes = await this.wishlistModel.findAll({
+      where: { clientId: clientId },
+    });
+    return {
+      data: wishes,
+      total: wishes.length,
+    };
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} wishlist`;
-  }
-
-  update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return `This action updates a #${id} wishlist`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} wishlist`;
+    return this.wishlistModel.findByPk(id);
   }
 }
