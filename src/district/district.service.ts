@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDistrictDto } from './dto/create-district.dto';
 import { UpdateDistrictDto } from './dto/update-district.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { District } from './models/district.model';
 
 @Injectable()
 export class DistrictService {
-  create(createDistrictDto: CreateDistrictDto) {
-    return 'This action adds a new district';
+  constructor(
+    @InjectModel(District)
+    private readonly districtModel: typeof District,
+  ) {}
+
+  async create(createDistrictDto: CreateDistrictDto){
+    return await this.districtModel.create(createDistrictDto);
   }
 
-  findAll() {
-    return `This action returns all district`;
+  async findAll() {
+    return await this.districtModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} district`;
+  async findOne(id: number) {
+    const district = await this.districtModel.findByPk(id);
+    if (!district) {
+      throw new NotFoundException(`District with ID ${id} not found.`);
+    }
+    return this.districtModel.findByPk(id, { include: { all: true } });
   }
 
-  update(id: number, updateDistrictDto: UpdateDistrictDto) {
-    return `This action updates a #${id} district`;
+  async update(id: number, updateDistrictDto: UpdateDistrictDto) {
+    const district = await this.districtModel.findByPk(id);
+    if (!district) {
+      throw new NotFoundException(`District with ID ${id} not found.`);
+    }
+    return await district.update(updateDistrictDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} district`;
+  async remove(id: number) {
+    const district = await this.districtModel.findByPk(id);
+    if (!district) {
+      throw new NotFoundException(`District with ID ${id} not found.`);
+    }
+    return  district.destroy();
   }
 }

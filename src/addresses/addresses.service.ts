@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Address } from './models/address.model';
 
 @Injectable()
 export class AddressesService {
-  create(createAddressDto: CreateAddressDto) {
-    return 'This action adds a new address';
+  constructor(
+    @InjectModel(Address)
+    private readonly addressModel:typeof Address,
+  ) {}
+
+  async create(CreateAddressDto: CreateAddressDto) {
+    return await this.addressModel.create(CreateAddressDto);
   }
 
-  findAll() {
-    return `This action returns all addresses`;
+  async findAll() {
+    return await this.addressModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  async findOne(id: number) {
+    const address = await this.addressModel.findByPk(id);
+    if (!address) {
+      throw new NotFoundException(`Address with ID ${id} not found.`);
+    }
+    return this.addressModel.findByPk(id, { include: { all: true } });
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(id: number, updateAddressDto: UpdateAddressDto) {
+    const address = await this.addressModel.findByPk(id);
+    if (!address) {
+      throw new NotFoundException(`Address with ID ${id} not found.`);
+    }
+    return await address.update(updateAddressDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(id: number) {
+    const address = await this.addressModel.findByPk(id);
+    if (!address) {
+      throw new NotFoundException(`Address with ID ${id} not found.`);
+    }
+    await address.destroy();
+    return { message: `Address with ID ${id} has been deleted.` };
   }
 }

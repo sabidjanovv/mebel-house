@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
+import { Region } from './models/region.model';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class RegionService {
-  create(createRegionDto: CreateRegionDto) {
-    return 'This action adds a new region';
+  constructor(
+    @InjectModel(Region)
+    private readonly regionModel: typeof Region,
+  ) {}
+
+  async create(createRegionDto: CreateRegionDto) {
+    return await this.regionModel.create(createRegionDto);
   }
 
-  findAll() {
-    return `This action returns all region`;
+  async findAll() {
+    return await this.regionModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} region`;
+  async findOne(id: number) {
+    const region = await this.regionModel.findByPk(id);
+    if (!region) {
+      throw new NotFoundException(`Region with ID ${id} not found.`);
+    }
+    return this.regionModel.findByPk(id, { include: { all: true } });
   }
 
-  update(id: number, updateRegionDto: UpdateRegionDto) {
-    return `This action updates a #${id} region`;
+  async update(id: number, updateRegionDto: UpdateRegionDto) {
+    const region = await this.regionModel.findByPk(id);
+    if (!region) {
+      throw new NotFoundException(`Region with ID ${id} not found.`);
+    }
+    return await region.update(updateRegionDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} region`;
+  async remove(id: number) {
+    const region = await this.regionModel.findByPk(id);
+    if (!region) {
+      throw new NotFoundException(`Region with ID ${id} not found.`);
+    }
+    return region.destroy();
   }
 }
