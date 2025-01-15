@@ -14,7 +14,7 @@ interface IAddreeAttr{
 }
 
 @Table({ tableName: "address"})
-export class Address extends Model<Address>{
+export class Address extends Model<Address,IAddreeAttr>{
     @ApiProperty({example: 1, description: "Address"})
     @Column({
         type: DataType.INTEGER,
@@ -24,14 +24,14 @@ export class Address extends Model<Address>{
     id: number;
 
     @ApiProperty({example: 1, description: "Client"})
-    // @ForeignKey(()=> Client)
+    @ForeignKey(()=> Client)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
     clientId: number;
-    // @BelongsTo(()=> Client)
-    // client: Client;
+    @BelongsTo(()=> Client)
+    client: Client;
 
     @ApiProperty({example: "123 Main St", description: "Street"})
     @Column({
@@ -41,14 +41,14 @@ export class Address extends Model<Address>{
     street: string;
 
     @ApiProperty({example: 12345, description: "House number"})
-    // @ForeignKey(()=> Region)
+    @ForeignKey(()=> Region)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
     regionId: number;
-    // @BelongsTo(()=> Region)
-    // region: Region;
+    @BelongsTo(()=> Region)
+    region: Region;
 
     @ApiProperty({example: "New York", description: "Region"})
     @Column({

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { Region } from "src/region/models/region.model";
 
 
 interface IDistrictAttr{
@@ -25,12 +26,12 @@ export class District extends Model<District, IDistrictAttr > {
     name: string;
 
     @ApiProperty({example: 1, description: "Region"})
-    // @ForeignKey(()=> Region)
+    @ForeignKey(()=> Region)
     @Column({
         type: DataType.INTEGER,
         allowNull: false
     })
     regionId: number;
-    // @BelongsTo(()=> Region)
-    // region: Region;
+    @BelongsTo(()=> Region)
+    region: Region;
 }
