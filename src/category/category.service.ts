@@ -36,7 +36,7 @@ export class CategoryService {
       where: { id },
       returning: true,
     });
-    return update;
+    return update[1][0];
   }
 
   async remove(id: number) {
@@ -44,6 +44,10 @@ export class CategoryService {
     if (!category) {
       throw new BadRequestException(`ID:${id} Category does not exists!`);
     }
-    return this.categoryModel.destroy({ where: { id } });
+    await this.categoryModel.destroy({where: {id}})
+    return {
+      id,
+      message: `ID: ${id} Category successfully deleted!`,
+    }
   }
 }

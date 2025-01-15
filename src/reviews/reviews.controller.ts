@@ -97,11 +97,8 @@ export class ReviewsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Review not found',
   })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.reviewsService.remove(id);
-    return {
-      message: 'Review deleted successfully',
-    };
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.reviewsService.remove(+id);
   }
 }

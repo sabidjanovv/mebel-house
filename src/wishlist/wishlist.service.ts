@@ -15,7 +15,9 @@ export class WishlistService {
   ) {}
   async create(createWishlistDto: CreateWishlistDto) {
     const client = await this.clientModel.findByPk(createWishlistDto.clientId);
-    const product = await this.productModel.findByPk(createWishlistDto.productId);
+    const product = await this.productModel.findByPk(
+      createWishlistDto.productId,
+    );
     if (!client) {
       throw new BadRequestException(
         `Client with ID: ${createWishlistDto.clientId} not found.`,
@@ -26,25 +28,28 @@ export class WishlistService {
         `Product with ID: ${createWishlistDto.productId} not found.`,
       );
     }
-    const wishlist = await this.wishlistModel.findOne({
+    const existingWishlist = await this.wishlistModel.findOne({
       where: {
         clientId: createWishlistDto.clientId,
         productId: createWishlistDto.productId,
       },
     });
-    if (wishlist) {
-      await this.wishlistModel.destroy({ where: { id: wishlist.id } });
+    console.log(existingWishlist);
+
+    if (existingWishlist) {
+      await this.wishlistModel.destroy({ where: { id: existingWishlist.id } });
+      return { message: 'Wishlist deleted successfully' };
     }
     return this.wishlistModel.create(createWishlistDto);
   }
 
-  async findAll() {
-    const wishes = await this.wishlistModel.findAll();
-    return {
-      data: wishes,
-      total: wishes.length,
-    };
-  }
+  // async findAll() {
+  //   const wishes = await this.wishlistModel.findAll();
+  //   return {
+  //     data: wishes,
+  //     total: wishes.length,
+  //   };
+  // }
 
   async findByClientId(clientId: number) {
     const client = await this.clientModel.findByPk(clientId);
@@ -63,7 +68,7 @@ export class WishlistService {
     };
   }
 
-  findOne(id: number) {
-    return this.wishlistModel.findByPk(id);
-  }
+  // findOne(id: number) {
+  //   return this.wishlistModel.findByPk(id);
+  // }
 }

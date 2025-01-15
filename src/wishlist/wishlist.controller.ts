@@ -20,27 +20,27 @@ export class WishlistController {
     return this.wishlistService.create(createWishlistDto);
   }
 
-  @UseGuards(AdminGuard)
-  @Get()
-  @ApiOperation({ summary: 'Retrieve all likes (Admin only)' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all likes retrieved successfully',
-  })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll() {
-    return this.wishlistService.findAll();
-  }
+  // @UseGuards(AdminGuard)
+  // @Get()
+  // @ApiOperation({ summary: 'Retrieve all likes (Admin only)' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'List of all likes retrieved successfully',
+  // })
+  // @ApiResponse({ status: 403, description: 'Forbidden' })
+  // findAll() {
+  //   return this.wishlistService.findAll();
+  // }
 
-  @UseGuards(AdminGuard)
-  @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a like by ID (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Unique identifier of the like' })
-  @ApiResponse({ status: 200, description: 'Like retrieved successfully' })
-  @ApiResponse({ status: 404, description: 'Like not found' })
-  findOne(@Param('id') id: string) {
-    return this.wishlistService.findOne(+id);
-  }
+  // @UseGuards(AdminGuard)
+  // @Get(':id')
+  // @ApiOperation({ summary: 'Retrieve a like by ID (Admin only)' })
+  // @ApiParam({ name: 'id', description: 'Unique identifier of the like' })
+  // @ApiResponse({ status: 200, description: 'Like retrieved successfully' })
+  // @ApiResponse({ status: 404, description: 'Like not found' })
+  // findOne(@Param('id') id: string) {
+  //   return this.wishlistService.findOne(+id);
+  // }
 
   @UseGuards(ClientSelfGuard)
   @Get('client/:id')

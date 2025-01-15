@@ -20,11 +20,12 @@ export class ProductService {
   }
 
   async findOne(id: number) {
-    const product = await this.productModel.findByPk(id);
-    if (!product) {
+    const existingProduct = await this.productModel.findByPk(id);
+    if (!existingProduct) {
       throw new BadRequestException(`ID:${id} Product does not exists!`);
     }
-    return this.productModel.findByPk(+id, { include: { all: true } });
+    const product = this.productModel.findByPk(+id, { include: { all: true } });
+    return product
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
@@ -36,7 +37,7 @@ export class ProductService {
       where: { id },
       returning: true,
     });
-    return update;
+    return update[1][0];
   }
 
   async remove(id: number) {
@@ -44,6 +45,7 @@ export class ProductService {
     if (!product) {
       throw new BadRequestException(`ID:${id} Product does not exists!`);
     }
-    return this.productModel.destroy({ where: { id } });
+    this.productModel.destroy({ where: { id } });
+    return { id, message: `ID: ${id} Product successfully deleted!` };
   }
 }
