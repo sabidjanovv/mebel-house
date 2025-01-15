@@ -41,5 +41,5 @@ export class Category extends Model<Category, ICreationCategoryAttr> {
   description: string;
 
   @HasMany(() => Product)
-  product: Product;
+  product: Product[];
 }
