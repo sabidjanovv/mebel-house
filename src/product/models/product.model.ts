@@ -24,6 +24,7 @@ interface ICreationProductAttr {
   description: string;
   categoryId: number;
   stock: number;
+  avg_rating:number;
 }
 
 @Table({ tableName: 'product' })
@@ -105,6 +106,17 @@ export class Product extends Model<Product, ICreationProductAttr> {
     allowNull: false,
   })
   stock: number;
+
+  @ApiProperty({
+    description: 'Oqilgan mahsulotlar raqami',
+    example: 4.5,
+    required: false,
+  })
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  avg_rating: number;
 
   @HasOne(() => ProductDetail)
   productDetail: ProductDetail;
