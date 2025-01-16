@@ -25,8 +25,9 @@ async function start() {
 
     const config = new DocumentBuilder()
       .setTitle('Mebel House')
+      .addBearerAuth()
       .setDescription('Mebel House REST API')
-      .setVersion('1.0')
+      .setVersion('1.0.0')
       .addTag('NESTJS, validation, swagger, guard, sequelize, pg, mailer, otp')
       .build();
     const document = SwaggerModule.createDocument(app, config);
