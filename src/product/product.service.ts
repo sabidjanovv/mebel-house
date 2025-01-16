@@ -32,36 +32,43 @@ export class ProductService {
     });
   }
 
-  async findAll(query: PaginationDto) {
+  async findAll(query: PaginationDto): Promise<{
+    data: Product[];
+    page: number;
+    limit: number;
+    total: number;
+  }> {
     const {
       filter,
       order = 'asc',
-      price = 'asc',
       page = 1,
       limit = 10,
+      minPrice = 0,
+      maxPrice = 10,
     } = query;
 
-    const offset = (page - 1) * limit; // Sequelize uses offset instead of skip
+    const offset = (page - 1) * limit;
 
     // Build dynamic where clause for filtering
-    const where = filter
-      ? {
-          [Op.or]: [
-            { name: { [Op.like]: `%${filter}%` } },
-            { description: { [Op.like]: `%${filter}%` } },
-          ],
-        }
-      : {};
+    const where: any = {
+      price: { [Op.between]: [minPrice, maxPrice] },
+    };
 
-    const { rows: data, count: total } =
-      await this.productModel.findAndCountAll({
-        where,
-        order: [['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
-        offset,
-        limit,
-      })
-    
-    
+    if (filter) {
+      where[Op.or] = [
+        { name: { [Op.like]: `%${filter}%` } },
+        { description: { [Op.like]: `%${filter}%` } },
+      ];
+    }
+
+    const { rows: data, count: total } = await this.productModel.findAndCountAll({
+      where,
+      order: [
+        ['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+      ],
+      offset,
+      limit,
+    });
 
     return {
       data,
@@ -82,14 +89,22 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const { name, description, ...otherFields } = updateProductDto;
+
     const product = await this.productModel.findByPk(id);
     if (!product) {
       throw new NotFoundException(`ID:${id} Product does not exist!`);
     }
-    await this.productModel.update(updateProductDto, {
-      where: { id },
-    });
-    return this.productModel.findByPk(id); // Return the updated product
+
+    const updatedFields = {
+      ...otherFields,
+      ...(name && { name: name.toLowerCase() }), // Only update if name is provided
+      ...(description && { description: description.toLowerCase() }), // Only update if description is provided
+    };
+
+    await product.update(updatedFields);
+
+    return product;
   }
 
   async remove(id: number) {

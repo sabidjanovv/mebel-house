@@ -60,4 +60,7 @@ export class CreateProductDto {
   })
   @IsNumber()
   stock:number;
+
+  @IsOptional()
+  avg_rating?: number;
 }

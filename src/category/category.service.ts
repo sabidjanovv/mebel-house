@@ -8,35 +8,52 @@ import { Category } from './models/category.model';
 export class CategoryService {
   constructor(@InjectModel(Category) private categoryModel: typeof Category) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return this.categoryModel.create(createCategoryDto);
+  async create(createCategoryDto: CreateCategoryDto) {
+    const { name, ...otherFields } = createCategoryDto;
+
+    // Ensure name is saved in lowercase
+    return this.categoryModel.create({
+      ...otherFields,
+      name: name.toLowerCase(),
+    });
   }
 
   async findAll() {
-    const categorys = await this.categoryModel.findAll({
+    const categories = await this.categoryModel.findAll({
       include: { all: true },
     });
-    return { data: categorys, total: categorys.length };
+
+    return { data: categories, total: categories.length };
   }
 
   async findOne(id: number) {
-    const category = await this.categoryModel.findByPk(id);
+    const category = await this.categoryModel.findByPk(id, {
+      include: { all: true },
+    });
+
     if (!category) {
-      throw new BadRequestException(`ID:${id} Category does not exists!`);
+      throw new BadRequestException(`ID:${id} Category does not exist!`);
     }
-    return this.categoryModel.findByPk(+id, { include: { all: true } });
+
+    return category; // Directly return the category instance
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const { name, ...otherFields } = updateCategoryDto;
+
+    // Find the category by ID
     const category = await this.categoryModel.findByPk(id);
     if (!category) {
-      throw new BadRequestException(`ID:${id} Category does not exists!`);
+      throw new BadRequestException(`ID:${id} Category does not exist!`);
     }
-    const update = await this.categoryModel.update(updateCategoryDto, {
-      where: { id },
-      returning: true,
+
+    // Perform the update with lowercase transformation for name
+    const updatedCategory = await category.update({
+      ...otherFields,
+      ...(name && { name: name.toLowerCase() }),
     });
-    return update[1][0];
+
+    return updatedCategory;
   }
 
   async remove(id: number) {
@@ -44,10 +61,10 @@ export class CategoryService {
     if (!category) {
       throw new BadRequestException(`ID:${id} Category does not exists!`);
     }
-    await this.categoryModel.destroy({where: {id}})
+    await this.categoryModel.destroy({ where: { id } });
     return {
       id,
       message: `ID: ${id} Category successfully deleted!`,
-    }
+    };
   }
 }

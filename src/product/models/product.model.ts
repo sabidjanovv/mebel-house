@@ -114,9 +114,9 @@ export class Product extends Model<Product, ICreationProductAttr> {
   })
   @Column({
     type: DataType.FLOAT,
-    allowNull: false,
+    defaultValue: 0,
   })
-  avg_rating: number;
+  avg_rating?: number;
 
   @HasOne(() => ProductDetail)
   productDetail: ProductDetail;
