@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as uuid from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
+
 @Injectable()
 export class FileService {
   async saveFile(file: any): Promise<string> {
@@ -12,8 +13,6 @@ export class FileService {
         );
       }
       const extname = path.extname(file.originalname);
-      // console.log(extname, "\n", file);
-
       const fileName = uuid.v4() + extname;
 
       const filePath = path.resolve(__dirname, '..', 'static');

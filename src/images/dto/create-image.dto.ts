@@ -1,12 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class CreateImageDto {
   @ApiProperty({
-    example: 'https://example.com/image.jpg',
-    description: 'Rasm URL manzili',
+    example: [
+      'https://example.com/image1.jpg',
+      'https://example.com/image2.jpg',
+    ],
+    description: 'Rasm URL manzillari',
   })
   @IsOptional()
-  @IsString()
-  image: string;
+  @IsArray()
+  @IsString({ each: true })
+  image: string[];
 }
