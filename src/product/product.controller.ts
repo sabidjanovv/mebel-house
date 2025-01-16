@@ -63,28 +63,30 @@ export class ProductController {
   @ApiQuery({
     name: 'minPrice',
     required: false,
-    enum: ['asc', 'desc'],
-    description: 'minPrice of sorting',
+    description: 'Minimum price for filtering',
   })
   @ApiQuery({
     name: 'maxPrice',
     required: false,
-    enum: ['asc', 'desc'],
-    description: 'maxPrice of sorting',
+    description: 'Maximum price for filtering',
   })
   @ApiResponse({ status: 200, description: 'List of products' })
   async findAll(@Query() query: PaginationDto) {
-    console.log('Received query:', query);
+    // console.log('Received query:', query);
 
-    const { filter, order, page, limit, minPrice, maxPrice } = query;
+    const {
+      filter,
+      order = 'asc',
+      page = 1,
+      limit = 10,
+      minPrice = 0,
+      maxPrice = Infinity,
+    } = query;
 
-    const pageNum = page ? parseInt(page.toString(), 10) : 1;
-    const limitNum = limit ? parseInt(limit.toString(), 10) : 10;
-    const minPriceNum = minPrice ? parseInt(minPrice.toString(), 0): 0
-    const maxPriceNum = maxPrice? parseInt(maxPrice.toString(), 10) : 10;
-
-    // console.log('Converted pageNum:', pageNum);
-    // console.log('Converted limitNum:', Number(limitNum));
+    const pageNum = parseInt(page.toString(), 10);
+    const limitNum = parseInt(limit.toString(), 10);
+    const minPriceNum = minPrice ? parseInt(minPrice.toString(), 10) : 0;
+    const maxPriceNum = maxPrice ? parseInt(maxPrice.toString(), 10) : Infinity;
 
     return this.productService.findAll({
       filter,

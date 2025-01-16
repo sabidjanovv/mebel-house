@@ -20,6 +20,15 @@ export class PaginationDto {
   @IsString()
   order?: 'asc' | 'desc';
 
+  // @ApiPropertyOptional({
+  //   description: 'Order by name',
+  //   example: 'asc',
+  //   enum: ['asc', 'desc'],
+  // })
+  // @IsOptional()
+  // @IsString()
+  // price?: 'asc' | 'desc';
+
   @ApiPropertyOptional({ description: 'Minimum price filter', example: 100 })
   @IsOptional()
   @Type(() => Number) // Convert to number
