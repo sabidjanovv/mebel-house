@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Product } from '../../product/models/product.model';
 
 interface ICreationImageAttr {
-  image: string;
+  image: string[];
   productId: number;
 }
 
@@ -28,16 +28,15 @@ export class Image extends Model<Image, ICreationImageAttr> {
   id: number;
 
   @ApiProperty({
-    example: 'https://example.com/image.jpg',
-    description: 'Rasm URL manzili',
+    example: [
+      'https://example.com/image1.jpg',
+      'https://example.com/image2.jpg',
+    ],
+    description: 'Rasm URL manzillari',
   })
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  image: string;
+  @Column(DataType.ARRAY(DataType.STRING))
+  image: string[];
 
-  //
   @ApiProperty({
     example: 1,
     description: 'Product unikal identifikatori',
@@ -51,5 +50,4 @@ export class Image extends Model<Image, ICreationImageAttr> {
 
   @BelongsTo(() => Product)
   product: Product;
-  //
 }

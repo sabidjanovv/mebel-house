@@ -12,23 +12,28 @@ export class ImagesService {
     private readonly fileService: FileService,
   ) {}
 
-  async create(createImageDto: CreateImageDto, image: any): Promise<Image> {
-    const fileName = await this.fileService.saveFile(image);
+  async create(createImageDto: CreateImageDto, images: any[]): Promise<Image> {
+    // Fayllarni saqlash
+    const fileNames = await Promise.all(
+      images.map((image) => this.fileService.saveFile(image)),
+    );
+
+    // Rasmni yaratish
     return this.imageModel.create({
       ...createImageDto,
-      image: fileName,
+      image: fileNames, // Fayllar nomlarini saqlash
     });
   }
 
   async findAll() {
-    const image = await this.imageModel.findAll({ include: { all: true } });
-    return { data: image, total: image.length };
+    const images = await this.imageModel.findAll({ include: { all: true } });
+    return { data: images, total: images.length };
   }
 
   async findOne(id: number) {
     const image = await this.imageModel.findByPk(id);
     if (!image) {
-      throw new BadRequestException(`ID:${id} Image does not exists!`);
+      throw new BadRequestException(`ID:${id} Image does not exist!`);
     }
     return this.imageModel.findByPk(+id, { include: { all: true } });
   }
@@ -36,7 +41,7 @@ export class ImagesService {
   async update(id: number, updateImageDto: UpdateImageDto) {
     const image = await this.imageModel.findByPk(id);
     if (!image) {
-      throw new BadRequestException(`ID:${id} Image does not exists!`);
+      throw new BadRequestException(`ID:${id} Image does not exist!`);
     }
     const update = await this.imageModel.update(updateImageDto, {
       where: { id },
@@ -48,7 +53,7 @@ export class ImagesService {
   async remove(id: number) {
     const image = await this.imageModel.findByPk(id);
     if (!image) {
-      throw new BadRequestException(`ID:${id} Image does not exists!`);
+      throw new BadRequestException(`ID:${id} Image does not exist!`);
     }
     return this.imageModel.destroy({ where: { id } });
   }

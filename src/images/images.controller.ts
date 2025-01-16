@@ -7,30 +7,33 @@ import {
   Param,
   Delete,
   UseInterceptors,
-  UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Image } from './models/image.model';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Rasmlar')
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @ApiOperation({ summary: 'Yangi rasm yaratish' })
+  @ApiOperation({ summary: 'Yangi rasmlar yaratish' })
   @ApiResponse({
     status: 201,
-    description: 'Yangi rasm muvaffaqiyatli yaratildi.',
-    type: Image,
+    description: 'Yangi rasmlar muvaffaqiyatli yaratildi.',
+    type: [Image],
   })
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
-  create(@Body() createImageDto: CreateImageDto, @UploadedFile() image: any) {
-    return this.imagesService.create(createImageDto, image);
+  @UseInterceptors(FilesInterceptor('images')) // Bir nechta faylni yuklash uchun
+  create(
+    @Body() createImageDto: CreateImageDto,
+    @UploadedFiles() images: any[],
+  ) {
+    return this.imagesService.create(createImageDto, images);
   }
 
   @ApiOperation({ summary: 'Barcha rasmlarni olish' })
