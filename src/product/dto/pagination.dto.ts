@@ -9,6 +9,9 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   order?: 'asc' | 'desc';
+  
+  @IsOptional()
+  price?: 'asc' | 'desc';
 
   @IsOptional()
   @Type(() => Number) // Convert to number

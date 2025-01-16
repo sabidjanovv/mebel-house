@@ -1,16 +1,55 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Review } from './models/review.model';
+import { Product } from '../product/models/product.model';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectModel(Review) private readonly reviewModel: typeof Review,
+    @InjectModel(Product) private readonly productModel: typeof Product,
   ) {}
   async create(createReviewDto: CreateReviewDto) {
-    return this.reviewModel.create(createReviewDto);
+    const product = await this.productModel.findByPk(
+      createReviewDto.productId,
+      {
+        include: { model: Review },
+      },
+    );
+
+    if (!product) {
+      throw new NotFoundException(
+        `Product with id ${createReviewDto.productId} not found.`,
+      );
+    }
+
+    const existingReview = await this.reviewModel.findOne({
+      where: {
+        clientId: createReviewDto.clientId,
+        productId: createReviewDto.productId,
+      },
+    });
+    if (existingReview) {
+      throw new ForbiddenException(
+        'You are already rated',
+      );
+    }
+
+    // Create the new review
+    const newReview = await this.reviewModel.create(createReviewDto);
+
+    // Calculate avg_rating
+    const reviews = await this.reviewModel.findAll({
+      where: { productId: createReviewDto.productId },
+    });
+    const avgRating =
+      reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+
+    await product.update({ avg_rating: avgRating });
+
+    return newReview;
   }
 
   async findAll() {

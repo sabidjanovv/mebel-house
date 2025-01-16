@@ -64,7 +64,7 @@ export class ProductController {
   async findAll(@Query() query: PaginationDto) {
     console.log('Received query:', query);
 
-    const { filter, order, page, limit } = query;
+    const { filter, order, price, page, limit } = query;
 
     const pageNum = page ? parseInt(page.toString(), 10) : 1;
     const limitNum = limit ? parseInt(limit.toString(), 10) : 10;
@@ -75,6 +75,7 @@ export class ProductController {
     return this.productService.findAll({
       filter,
       order,
+      price,
       page: pageNum,
       limit: limitNum,
     });

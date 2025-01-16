@@ -33,7 +33,13 @@ export class ProductService {
   }
 
   async findAll(query: PaginationDto) {
-    const { filter, order = 'asc', page = 1, limit = 10 } = query;
+    const {
+      filter,
+      order = 'asc',
+      price = 'asc',
+      page = 1,
+      limit = 10,
+    } = query;
 
     const offset = (page - 1) * limit; // Sequelize uses offset instead of skip
 
@@ -53,7 +59,9 @@ export class ProductService {
         order: [['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
         offset,
         limit,
-      });
+      })
+    
+    
 
     return {
       data,
