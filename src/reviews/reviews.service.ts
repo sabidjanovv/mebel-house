@@ -32,13 +32,19 @@ export class ReviewsService {
       },
     });
     if (existingReview) {
-      throw new ForbiddenException(
-        'You are already rated',
-      );
+      throw new ForbiddenException('You are already rated');
     }
 
-    // Create the new review
-    const newReview = await this.reviewModel.create(createReviewDto);
+    // Create the new review with formatted date and time
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    const formattedTime = currentDate.toTimeString().split(' ')[0]; // Format as HH:mm:ss
+
+    const newReview = await this.reviewModel.create({
+      ...createReviewDto,
+      createdAt: formattedDate,
+      createdTime: formattedTime,
+    });
 
     // Calculate avg_rating
     const reviews = await this.reviewModel.findAll({

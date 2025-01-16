@@ -16,9 +16,10 @@ interface IReviewAttr {
   rating: number;
   comment: string;
   createdAt: string;
+  createdTime: string;
 }
 
-@Table({tableName:"reviews"})
+@Table({ tableName: 'reviews' })
 export class Review extends Model<Review, IReviewAttr> {
   @ApiProperty({ example: 1, description: 'Unique review ID' })
   @Column({
@@ -57,16 +58,26 @@ export class Review extends Model<Review, IReviewAttr> {
   })
   rating?: number;
 
-  @ApiProperty({ example: 'Great product!', description: 'Client review comment' })
+  @ApiProperty({
+    example: 'Great product!',
+    description: 'Client review comment',
+  })
   @Column({
     type: DataType.STRING,
   })
   comment?: string;
 
-  @ApiProperty({ example: '2022-01-01T10:00:00.000Z', description: 'Review creation date' })
+  @ApiProperty({ example: '2022-01-01', description: 'Review creation date' })
   @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
   })
-  createdAt: string;
+  createdAt?: string;
+
+  @ApiProperty({ example: '15:30:56', description: 'Review creation date' })
+  @Column({
+    type: DataType.TIME,
+    defaultValue: DataType.NOW,
+  })
+  createdTime?: string;
 }

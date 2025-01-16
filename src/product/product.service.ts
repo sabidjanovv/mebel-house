@@ -44,16 +44,19 @@ export class ProductService {
       page = 1,
       limit = 10,
       minPrice = 0,
-      maxPrice = 10,
+      maxPrice = Infinity,
     } = query;
 
     const offset = (page - 1) * limit;
 
-    // Build dynamic where clause for filtering
-    const where: any = {
-      price: { [Op.between]: [minPrice, maxPrice] },
-    };
+    const where: any = {};
 
+    // Add price range to where clause
+    if (minPrice || maxPrice) {
+      where.price = { [Op.between]: [minPrice, maxPrice] };
+    }
+
+    // Add filter to where clause
     if (filter) {
       where[Op.or] = [
         { name: { [Op.like]: `%${filter}%` } },
@@ -61,21 +64,25 @@ export class ProductService {
       ];
     }
 
-    const { rows: data, count: total } = await this.productModel.findAndCountAll({
-      where,
-      order: [
-        ['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
-      ],
-      offset,
-      limit,
-    });
+    try {
+      const { rows: data, count: total } =
+        await this.productModel.findAndCountAll({
+          where,
+          order: [['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
+          offset,
+          limit,
+        });
 
-    return {
-      data,
-      page,
-      limit,
-      total,
-    };
+      return {
+        data,
+        page,
+        limit,
+        total,
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error.message);
+      throw error;
+    }
   }
 
   async findOne(id: number) {
