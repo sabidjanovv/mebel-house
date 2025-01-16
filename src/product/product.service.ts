@@ -15,8 +15,21 @@ import { PaginationDto } from './dto/pagination.dto';
 export class ProductService {
   constructor(@InjectModel(Product) private productModel: typeof Product) {}
 
-  create(createProductDto: CreateProductDto) {
-    return this.productModel.create(createProductDto);
+  async create(createProductDto: CreateProductDto) {
+    const { name, description, ...otherFields } = createProductDto;
+
+    if (!name) {
+      throw new BadRequestException('Name is required.');
+    }
+    if (!description) {
+      throw new BadRequestException('Description is required.');
+    }
+
+    return this.productModel.create({
+      ...otherFields,
+      name: name.toLowerCase(),
+      description: description.toLowerCase(),
+    });
   }
 
   async findAll(query: PaginationDto) {
