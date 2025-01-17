@@ -49,6 +49,7 @@ export class OrderService {
           where, // Status sharti
           offset, // Paginatsiya
           limit: validLimit,
+          include:{all:true}
         });
 
       return {
