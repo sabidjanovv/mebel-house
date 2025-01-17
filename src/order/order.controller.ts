@@ -2,8 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Order } from './models/order.model';
+import { PaginationOrderDto } from './dto/pagination-order.dto';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -21,15 +22,55 @@ export class OrderController {
     return this.orderService.create(createOrderDto);
   }
 
-  @ApiOperation({ summary: 'Get all orders' })
-  @ApiResponse({
-    status: 200,
-    description: 'All orders',
-    type: [Order],
-  })
+  // @ApiOperation({ summary: 'Get all orders' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'All orders',
+  //   type: [Order],
+  // })
+  // @Get()
+  // findAll() {
+  //   return this.orderService.findAll();
+  // }
+
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @ApiOperation({
+    summary:
+      'Retrieve all orders with optional filtering, sorting, and pagination',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['pending', 'processing', 'shipped', 'cancelled'],
+    description: 'Filter orders by status',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page',
+    example: 10,
+  })
+  @ApiResponse({ status: 200, description: 'List of orders' })
+  async findAll(@Query() query: PaginationOrderDto) {
+    // Query parametrlarini ajratib olish
+    const { status, page = 1, limit = 10 } = query;
+
+    // `page` va `limit`ni raqamga aylantirish (xatolarni oldini olish uchun)
+    const pageNum = Math.max(parseInt(page.toString(), 10) || 1, 1);
+    const limitNum = Math.max(parseInt(limit.toString(), 10) || 10, 1);
+
+    // Servisga parametrlarni yuborish va natijani qaytarish
+    return this.orderService.findAll({
+      status,
+      page: pageNum,
+      limit: limitNum,
+    });
   }
 
   @ApiOperation({ summary: 'Get orders by ID' })

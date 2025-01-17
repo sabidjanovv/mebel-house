@@ -68,7 +68,7 @@ export class ProductService {
       const { rows: data, count: total } =
         await this.productModel.findAndCountAll({
           where,
-          order: [['name', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
+          order: [['price', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
           offset,
           limit,
         });
