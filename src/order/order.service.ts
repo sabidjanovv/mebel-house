@@ -3,6 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Order } from './models/order.model';
+import { PaginationOrderDto } from './dto/pagination-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -12,9 +13,54 @@ export class OrderService {
     return this.orderModel.create(createOrderDto);
   }
 
-  async findAll() {
-    const orders = await this.orderModel.findAll({ include: { all: true } });
-    return { data: orders, total: orders.length };
+  // async findAll() {
+  //   const orders = await this.orderModel.findAll({ include: { all: true } });
+  //   return { data: orders, total: orders.length };
+  // }
+
+  async findAll(query: PaginationOrderDto): Promise<{
+    data: Order[];
+    page: number;
+    limit: number;
+    total: number;
+  }> {
+    const {
+      status, // Status bo'yicha qidiruv uchun parametr
+      page = 1,
+      limit = 10,
+    } = query;
+
+    // `page` va `limit` ni tasdiqlash
+    const validPage = Math.max(Number(page) || 1, 1);
+    const validLimit = Math.max(Number(limit) || 10, 1);
+
+    const offset = (validPage - 1) * validLimit;
+
+    // Dinamik `where` obyektini yaratish
+    const where: any = {};
+    if (status) {
+      where.status = status; // Status bo'yicha filtr
+    }
+
+    try {
+      // Ma'lumotlarni olish
+      const { rows: data, count: total } =
+        await this.orderModel.findAndCountAll({
+          where, // Status sharti
+          offset, // Paginatsiya
+          limit: validLimit,
+        });
+
+      return {
+        data,
+        page: validPage,
+        limit: validLimit,
+        total,
+      };
+    } catch (error) {
+      console.error('Error fetching orders:', error.message);
+      throw new Error('Failed to fetch orders. Please try again.');
+    }
   }
 
   findOne(id: number) {
