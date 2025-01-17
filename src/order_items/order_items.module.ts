@@ -5,7 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { OrderItems } from './models/order_item.model';
 
 @Module({
-  imports:[SequelizeModule.forFeature([OrderItems])],
+  imports: [SequelizeModule.forFeature([OrderItems])],
   controllers: [OrderItemsController],
   providers: [OrderItemsService],
 })
