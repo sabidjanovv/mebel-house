@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -19,11 +19,6 @@ export class CartService {
     return await this.cartModel.create(createCartDto);
   }
 
-  async findAll() {
-    const carts = await this.cartModel.findAll({ include: { all: true } });
-    return { data: carts, total: carts.length };
-  }
-
   async findOne(id: number) {
     const cart = await this.cartModel.findByPk(id);
     if (!cart) {
@@ -32,17 +27,6 @@ export class CartService {
     return {
       data: cart,
     }
-  }
-
-  async update(id: number, updateCartDto: UpdateCartDto) {
-    const cart = await this.cartModel.findByPk(id);
-    if (!cart) {
-      throw new NotFoundException(`Cart with ID: ${id} not found.`);
-    }
-    const updatedCart = await cart.update(updateCartDto);
-    return {
-      data: updatedCart,
-    };
   }
 
   async remove(id: number) {

@@ -42,12 +42,6 @@ export class CartController {
     }
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Retrieve all carts' })
-  @ApiResponse({ status: 200, description: 'List of all carts.', type: [Cart] })
-  findAll() {
-    return this.cartService.findAll();
-  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a single cart by ID' })
@@ -65,28 +59,6 @@ export class CartController {
   findOne(@Param('id') id: string) {
     try {
       return this.cartService.findOne(+id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update an existing cart' })
-  @ApiResponse({
-    status: 200,
-    description: 'Cart updated successfully.',
-    type: Cart,
-  })
-  @ApiResponse({ status: 404, description: 'Cart not found.' })
-  @ApiParam({
-    name: 'id',
-    type: 'integer',
-    description: 'ID of the cart to update',
-  })
-  @ApiBody({ type: UpdateCartDto })
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    try {
-      return this.cartService.update(+id, updateCartDto);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
