@@ -20,6 +20,15 @@ export class PaginationDto {
   @IsString()
   order?: 'asc' | 'desc';
 
+  @ApiPropertyOptional({
+    description: 'Order by name',
+    example: 'pending',
+    enum: ['pending', 'processing', 'shipped', 'cancelled'],
+  })
+  @IsOptional()
+  @IsString()
+  status?: 'pending' | 'processing' | 'shipped' | 'cancelled';
+
   // @ApiPropertyOptional({
   //   description: 'Order by name',
   //   example: 'asc',
@@ -55,4 +64,13 @@ export class PaginationDto {
   @Type(() => Number) // Convert to number
   @IsNumber({}, { message: 'limit must be a valid number' })
   limit?: number;
+
+  @ApiPropertyOptional({
+    description: 'Sort by field (e.g., createdAt or id)',
+    example: 'createdAt',
+    enum: ['createdAt', 'id'],
+  })
+  @IsOptional()
+  @IsString()
+  sortBy?: 'createdAt' | 'id';
 }

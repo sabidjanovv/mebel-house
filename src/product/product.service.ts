@@ -45,6 +45,7 @@ export class ProductService {
       limit = 10,
       minPrice = 0,
       maxPrice = Infinity,
+      sortBy = 'createdAt', // Default field for sorting
     } = query;
 
     const offset = (page - 1) * limit;
@@ -68,7 +69,10 @@ export class ProductService {
       const { rows: data, count: total } =
         await this.productModel.findAndCountAll({
           where,
-          order: [['price', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC']],
+          order: [
+            [sortBy, order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+            ["price", order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+          ],
           offset,
           limit,
         });

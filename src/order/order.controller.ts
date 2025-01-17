@@ -4,7 +4,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Order } from './models/order.model';
-import { PaginationOrderDto } from './dto/pagination-order.dto';
+import { PaginationDto } from '../product/dto/pagination.dto';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -57,7 +57,7 @@ export class OrderController {
     example: 10,
   })
   @ApiResponse({ status: 200, description: 'List of orders' })
-  async findAll(@Query() query: PaginationOrderDto) {
+  async findAll(@Query() query: PaginationDto) {
     // Query parametrlarini ajratib olish
     const { status, page = 1, limit = 10 } = query;
 

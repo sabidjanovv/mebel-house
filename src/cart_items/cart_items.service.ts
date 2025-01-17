@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart_item.dto';
 import { UpdateCartItemDto } from './dto/update-cart_item.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -28,6 +28,11 @@ export class CartItemsService {
       throw new NotFoundException(
         `Product with ID: ${createCartItemDto.productId} not found.`,
       );
+    }
+    if(product.id === createCartItemDto.productId) {
+      return {
+        message: 'Cannot add same product twice'
+      }
     }
     return await this.cartItemModel.create(createCartItemDto);
   }

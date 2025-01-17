@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Order } from './models/order.model';
-import { PaginationOrderDto } from './dto/pagination-order.dto';
+import { PaginationDto } from '../product/dto/pagination.dto';
 
 @Injectable()
 export class OrderService {
@@ -18,7 +18,7 @@ export class OrderService {
   //   return { data: orders, total: orders.length };
   // }
 
-  async findAll(query: PaginationOrderDto): Promise<{
+  async findAll(query: PaginationDto): Promise<{
     data: Order[];
     page: number;
     limit: number;
