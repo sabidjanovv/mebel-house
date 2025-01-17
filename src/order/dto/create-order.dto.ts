@@ -24,7 +24,4 @@ export class CreateOrderDto {
   @ApiProperty({ example: 990000, description: 'Enter total price of order' })
   @IsNumber()
   total_price: number;
-
-  @ApiProperty({ example: '2025-01-15', description: 'Order date' })
-  order_date: Date;
 }

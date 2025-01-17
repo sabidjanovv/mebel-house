@@ -15,7 +15,6 @@ export enum OrderStatus {
   PENDING = 'pending',
   PROCESSING = 'processing',
   SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
   CANCELLED = 'cancelled',
 }
 
@@ -23,7 +22,6 @@ interface IOrderCreationAttr {
   clientId: number;
   status: OrderStatus;
   total_price: number;
-  order_date: Date;
   shipping_date: Date;
 }
 
@@ -59,12 +57,6 @@ export class Order extends Model<Order, IOrderCreationAttr> {
     allowNull: true,
   })
   total_price: number;
-
-  @Column({
-    type: DataType.DATEONLY,
-    allowNull: true,
-  })
-  order_date: Date;
 
   @Column({
     type: DataType.DATEONLY,
