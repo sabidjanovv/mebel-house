@@ -70,6 +70,12 @@ export class ProductController {
     required: false,
     description: 'Maximum price for filtering',
   })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['createdAt', 'id'],
+    description: 'Sort by field (e.g., createdAt or id)',
+  })
   @ApiResponse({ status: 200, description: 'List of products' })
   async findAll(@Query() query: PaginationDto) {
     // console.log('Received query:', query);
@@ -81,6 +87,7 @@ export class ProductController {
       limit = 10,
       minPrice = 0,
       maxPrice = Infinity,
+      sortBy = 'createdAt',
     } = query;
 
     const pageNum = parseInt(page.toString(), 10);
@@ -95,6 +102,7 @@ export class ProductController {
       limit: limitNum,
       minPrice: minPriceNum,
       maxPrice: maxPriceNum,
+      sortBy,
     });
   }
 
