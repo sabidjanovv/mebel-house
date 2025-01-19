@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Payment } from './models/payment.model';
+import { PaginationDto } from 'src/product/dto/pagination.dto';
 
 @ApiTags('Payments')
 @Controller('payment')
@@ -21,15 +22,40 @@ export class PaymentController {
     return this.paymentService.create(createPaymentDto);
   }
 
-  @ApiOperation({ summary: 'Get all payments' })
-  @ApiResponse({
-    status: 200,
-    description: 'All payments',
-    type: [Payment],
-  })
   @Get()
-  findAll() {
-    return this.paymentService.findAll();
+  @ApiOperation({ summary: 'Get all payments' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'All payments',
+  //   type: [Payment],
+  // })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page',
+    example: 10,
+  })
+  @ApiResponse({ status: 200, description: 'List of orders' })
+  async findAll(@Query() query: PaginationDto) {
+    // Query parametrlarini ajratib olish
+    const {  page = 1, limit = 10 } = query;
+    
+
+    // `page` va `limit`ni raqamga aylantirish (xatolarni oldini olish uchun)
+    const pageNum = Math.max(parseInt(page.toString(), 10) || 1, 1);
+    const limitNum = Math.max(parseInt(limit.toString(), 10) || 10, 1);
+
+    // Servisga parametrlarni yuborish va natijani qaytarish
+    return this.paymentService.findAll({
+      page: pageNum,
+      limit: limitNum,
+    });
   }
 
   @ApiOperation({ summary: 'Get payment by ID' })
