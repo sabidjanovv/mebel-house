@@ -6,18 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductDetailService } from './product_detail.service';
 import { CreateProductDetailDto } from './dto/create-product_detail.dto';
 import { UpdateProductDetailDto } from './dto/update-product_detail.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductDetail } from './models/product_detail.model';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('Mahsulot tafsilotlari')
 @Controller('product-detail')
 export class ProductDetailController {
   constructor(private readonly productDetailService: ProductDetailService) {}
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi mahsulot tafsilotini yaratish' })
   @ApiResponse({
     status: 201,
@@ -55,6 +58,7 @@ export class ProductDetailController {
     return this.productDetailService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Mahsulot tafsilotlarini yangilash' })
   @ApiResponse({
     status: 200,
@@ -72,6 +76,7 @@ export class ProductDetailController {
     return this.productDetailService.update(+id, updateProductDetailDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Mahsulot tafsilotlarini o'chirish" })
   @ApiResponse({
     status: 200,

@@ -7,6 +7,7 @@ import { Order } from './models/order.model';
 import { PaginationDto } from '../product/dto/pagination.dto';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { ClientSelfBodyGuard } from '../common/guards/client-self-body.guard';
+import { AdminClientSelfGuard } from '../common/guards/admin-clientSelf.guard';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -77,6 +78,7 @@ export class OrderController {
     });
   }
 
+  @UseGuards(AdminClientSelfGuard)
   @ApiOperation({ summary: 'Get orders by ID' })
   @ApiResponse({
     status: 200,
@@ -100,6 +102,7 @@ export class OrderController {
     return this.orderService.findByClientId(+clientId);
   }
 
+  @UseGuards(AdminClientSelfGuard)
   @ApiOperation({ summary: 'Update order by ID' })
   @ApiResponse({
     status: 200,
@@ -111,6 +114,7 @@ export class OrderController {
     return this.orderService.update(+id, updateOrderDto);
   }
 
+  @UseGuards(AdminClientSelfGuard)
   @ApiOperation({ summary: 'Delete order by ID' })
   @ApiResponse({
     status: 200,

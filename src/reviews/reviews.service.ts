@@ -78,28 +78,28 @@ export class ReviewsService {
     };
   }
 
-  async update(id: number, updateReviewDto: UpdateReviewDto) {
-    const review = await this.reviewModel.findByPk(id);
-    if (!review) {
-      throw new NotFoundException(`Review with id ${id} not found.`);
-    }
-    const updatedReview = review.update({
-      ...updateReviewDto,
-      clientId: review.clientId,
-      productId: review.productId,
-    });
-    return updatedReview;
-  }
+  // async update(id: number, updateReviewDto: UpdateReviewDto) {
+  //   const review = await this.reviewModel.findByPk(id);
+  //   if (!review) {
+  //     throw new NotFoundException(`Review with id ${id} not found.`);
+  //   }
+  //   const updatedReview = review.update({
+  //     ...updateReviewDto,
+  //     clientId: review.clientId,
+  //     productId: review.productId,
+  //   });
+  //   return updatedReview;
+  // }
 
-  async remove(id: number) {
-    const review = await this.reviewModel.findByPk(id);
-    if (!review) {
-      throw new NotFoundException(`Review with id ${id} not found.`);
-    }
-    await this.reviewModel.destroy({ where: { id } });
-    return {
-      id,
-      message: `ID: ${id} Review has been deleted.`,
-    };
-  }
+  // async remove(id: number) {
+  //   const review = await this.reviewModel.findByPk(id);
+  //   if (!review) {
+  //     throw new NotFoundException(`Review with id ${id} not found.`);
+  //   }
+  //   await this.reviewModel.destroy({ where: { id } });
+  //   return {
+  //     id,
+  //     message: `ID: ${id} Review has been deleted.`,
+  //   };
+  // }
 }

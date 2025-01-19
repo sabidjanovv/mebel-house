@@ -16,8 +16,8 @@ export class WishlistController {
   @ApiOperation({ summary: 'Create a new like' })
   @ApiResponse({ status: 201, description: 'Like created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid data' })
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistService.create(createWishlistDto);
+  toggle(@Body() createWishlistDto: CreateWishlistDto) {
+    return this.wishlistService.toggle(createWishlistDto);
   }
 
   // @UseGuards(AdminGuard)

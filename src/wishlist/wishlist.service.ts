@@ -13,7 +13,7 @@ export class WishlistService {
     @InjectModel(Client) private clientModel: typeof Client,
     @InjectModel(Product) private productModel: typeof Product,
   ) {}
-  async create(createWishlistDto: CreateWishlistDto) {
+  async toggle(createWishlistDto: CreateWishlistDto) {
     const client = await this.clientModel.findByPk(createWishlistDto.clientId);
     const product = await this.productModel.findByPk(
       createWishlistDto.productId,

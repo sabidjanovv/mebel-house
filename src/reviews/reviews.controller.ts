@@ -9,17 +9,20 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ClientReviewGuard } from '../common/guards/client-review.guard';
 
 @ApiTags('Reviews') // Tag for Swagger grouping
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  @UseGuards(ClientReviewGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new Review' })
   @ApiResponse({
@@ -66,39 +69,39 @@ export class ReviewsController {
     return this.reviewsService.findOne(id);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a review by ID' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Review updated successfully',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Review not found',
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid data provided',
-  })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateReviewDto: UpdateReviewDto,
-  ) {
-    return this.reviewsService.update(id, updateReviewDto);
-  }
+  // @Patch(':id')
+  // @ApiOperation({ summary: 'Update a review by ID' })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: 'Review updated successfully',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.NOT_FOUND,
+  //   description: 'Review not found',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.BAD_REQUEST,
+  //   description: 'Invalid data provided',
+  // })
+  // async update(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() updateReviewDto: UpdateReviewDto,
+  // ) {
+  //   return this.reviewsService.update(id, updateReviewDto);
+  // }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a review by ID' })
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
-    description: 'Review deleted successfully',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Review not found',
-  })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
-  }
+  // @Delete(':id')
+  // @ApiOperation({ summary: 'Delete a review by ID' })
+  // @ApiResponse({
+  //   status: HttpStatus.NO_CONTENT,
+  //   description: 'Review deleted successfully',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.NOT_FOUND,
+  //   description: 'Review not found',
+  // })
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.reviewsService.remove(+id);
+  // }
 }
