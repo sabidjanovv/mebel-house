@@ -9,7 +9,7 @@ import {
 import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
-export class ClientSelfLikesGuard implements CanActivate {
+export class ClientSelfBodyGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

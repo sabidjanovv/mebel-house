@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('Address')
 @Controller('addresses')
@@ -20,6 +21,7 @@ export class AddressesController {
     return this.addressesService.create(createAddressDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Barcha addreslarni olish' })
   @ApiResponse({ status: 200, description: "Adresslar ro'yxati" })
   @Get()
@@ -27,6 +29,7 @@ export class AddressesController {
     return this.addressesService.findAll();
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Id orqali addressni olish' })
   @ApiParam({
     name: 'id',
@@ -40,6 +43,7 @@ export class AddressesController {
     return this.addressesService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Address ma'lumotlarini yangilash" })
   @ApiParam({
     name: 'id',
@@ -57,6 +61,7 @@ export class AddressesController {
     return this.addressesService.update(+id, updateAddressDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Addressni o'chirish" })
   @ApiParam({
     name: 'id',

@@ -8,6 +8,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,14 +19,16 @@ import {
 } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './models/cart.model';
+import { ClientSelfBodyGuard } from '../common/guards/client-self-body.guard';
+import { ClientSelfGuard } from '../common/guards/client-self.guard';
 
 @ApiTags('Cart')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @UseGuards(ClientSelfBodyGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new cart' })
   @ApiResponse({
@@ -41,7 +44,6 @@ export class CartController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a single cart by ID' })
@@ -64,6 +66,7 @@ export class CartController {
     }
   }
 
+  @UseGuards(ClientSelfGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a cart by ID' })
   @ApiResponse({ status: 200, description: 'Cart deleted successfully.' })

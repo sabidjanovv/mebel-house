@@ -3,7 +3,7 @@ import { WishlistService } from './wishlist.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../common/guards/admin.guard';
-import { ClientSelfLikesGuard } from '../common/guards/client-self-likes.guard';
+import { ClientSelfBodyGuard } from '../common/guards/client-self-body.guard';
 import { ClientSelfGuard } from '../common/guards/client-self.guard';
 
 @ApiTags('Wishlist') // Corrected spelling
@@ -11,7 +11,7 @@ import { ClientSelfGuard } from '../common/guards/client-self.guard';
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
-  @UseGuards(ClientSelfLikesGuard)
+  @UseGuards(ClientSelfBodyGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new like' })
   @ApiResponse({ status: 201, description: 'Like created successfully' })

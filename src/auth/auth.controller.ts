@@ -7,6 +7,7 @@ import {
   Req,
   Get,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Admin } from '../admin/models/admin.model';
@@ -19,6 +20,8 @@ import { Client } from '../client/models/client.model';
 import { CreateClientDto } from '../client/dto/create-client.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailClientDto } from './dto/email-client.dto';
+import { AdminSelfGuard } from '../common/guards/admin-self.guard';
+import { ClientSelfGuard } from '../common/guards/client-self.guard';
 // import { User } from '../user/models/user.model';
 // import { CreateUserDto } from '../user/dto/create-user.dto';
 
@@ -53,6 +56,7 @@ export class AuthController {
     return this.authService.adminSignIn(adminSignInDto, res);
   }
 
+  @UseGuards(AdminSelfGuard)
   @ApiOperation({ summary: 'Refresh token to update credentials' })
   @Post('/refreshToken-admin/:id')
   async refreshToken(
@@ -63,6 +67,7 @@ export class AuthController {
     return this.authService.refreshToken(id, refresh_token, res);
   }
 
+  @UseGuards(AdminSelfGuard)
   @Post('admin-signout/:id')
   @ApiOperation({ summary: 'Admin logout from the system' })
   @ApiResponse({
@@ -112,6 +117,7 @@ export class AuthController {
     return this.authService.clientSignIn(clientSignInDto, res);
   }
 
+  @UseGuards(ClientSelfGuard)
   @Post('client-signout/:id')
   @ApiOperation({ summary: 'client tizimdan chiqishi' })
   @ApiResponse({
@@ -170,6 +176,7 @@ export class AuthController {
     }
   }
 
+  @UseGuards(ClientSelfGuard)
   @ApiOperation({ summary: "Client's Refresh token to update credentials" })
   @Post('/refreshToken/:id')
   async refreshTokenClient(
