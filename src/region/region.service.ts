@@ -16,7 +16,7 @@ export class RegionService {
   }
 
   async findAll() {
-    return await this.regionModel.findAll();
+    return await this.regionModel.findAll({ include: { all: true } });
   }
 
   async findOne(id: number) {

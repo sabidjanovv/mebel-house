@@ -21,7 +21,7 @@ export enum PaymentStatus {
 
 export interface IPaymentCreationAttr {
   orderId: number;
-  payment_method: PaymentMethod;
+  method: PaymentMethod;
   date: Date;
   status: PaymentStatus;
 }
