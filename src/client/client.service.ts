@@ -1,18 +1,66 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Client } from './models/client.model';
+import { PaginationDto } from '../product/dto/pagination.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ClientService {
   constructor(@InjectModel(Client) private clientModel: typeof Client) {}
-  async findAll() {
-    const clients = await this.clientModel.findAll({ include: { all: true } });
-    return {
-      data: clients,
-      total: clients.length,
-    };
+  async findAll(query: PaginationDto): Promise<{
+    data: Client[];
+    page: number;
+    limit: number;
+    total: number;
+  }> {
+
+    // const clients = await this.clientModel.findAll({ include: { all: true } });
+    // return {
+    //   data: clients,
+    //   total: clients.length,
+    // };
+
+    const {
+      filter,
+      order = 'asc',
+      page = 1,
+      limit = 10,
+    } = query;
+
+    const offset = (page - 1) * limit;
+
+    const where: any = {};
+
+    // Add filter to where clause
+    if (filter) {
+      where[Op.or] = [
+        { email: { [Op.like]: `%${filter}%` } },
+        { phone_number: { [Op.like]: `%${filter}%` } },
+      ];
+    }
+
+    try {
+      const { rows: data, count: total } =
+        await this.clientModel.findAndCountAll({
+          where,
+          order: [
+            ['createdAt', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+          ],
+          offset,
+          limit,
+        });
+
+      return {
+        data,
+        page,
+        limit,
+        total,
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error.message);
+      throw error;
+    }
   }
 
   async findOne(id: number) {
