@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { ClientSelfGuard } from '../common/guards/client-self.guard';
+import { PaginationDto } from '../product/dto/pagination.dto';
 
 @ApiTags('Client')
 @Controller('client')
@@ -14,9 +15,46 @@ export class ClientController {
   @UseGuards(AdminGuard)
   @Get()
   @ApiOperation({ summary: 'Get all clients' })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    description: 'Filter by client email or phone number',
+  })
+  @ApiQuery({
+    name: 'order',
+    required: false,
+    enum: ['asc', 'desc'],
+    description: 'Order of sorting',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page',
+    example: 10,
+  })
   @ApiResponse({ status: 200, description: 'List of all clients' })
-  findAll() {
-    return this.clientService.findAll();
+  async findAll(@Query() query: PaginationDto) {
+    const {
+      filter,
+      order = 'asc',
+      page = 1,
+      limit = 10,
+    } = query;
+
+    const pageNum = parseInt(page.toString(), 10);
+    const limitNum = parseInt(limit.toString(), 10);
+    return this.clientService.findAll({
+      filter,
+      order,
+      page: pageNum,
+      limit: limitNum,
+    });
   }
 
   @UseGuards(ClientSelfGuard)
