@@ -1,16 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Order } from './models/order.model';
 import { PaginationDto } from '../product/dto/pagination.dto';
+import { AdminGuard } from '../common/guards/admin.guard';
+import { ClientSelfBodyGuard } from '../common/guards/client-self-body.guard';
 
 @ApiTags('Orders')
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @UseGuards(ClientSelfBodyGuard)
   @ApiOperation({ summary: 'Add new order' })
   @ApiResponse({
     status: 201,
@@ -33,6 +36,7 @@ export class OrderController {
   //   return this.orderService.findAll();
   // }
 
+  @UseGuards(AdminGuard)
   @Get()
   @ApiOperation({
     summary:

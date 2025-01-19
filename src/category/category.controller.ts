@@ -6,18 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from './models/category.model';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('Kategoriyalar')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi kategoriya yaratish' })
   @ApiResponse({
     status: 201,
@@ -55,6 +58,7 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Kategoriya yangilash' })
   @ApiResponse({
     status: 200,
@@ -72,6 +76,7 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Kategoriya o'chirish" })
   @ApiResponse({
     status: 200,

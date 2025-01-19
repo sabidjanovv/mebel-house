@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { DistrictService } from './district.service';
 import { CreateDistrictDto } from './dto/create-district.dto';
 import { UpdateDistrictDto } from './dto/update-district.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('District')
 @Controller('district')
 export class DistrictController {
   constructor(private readonly districtService: DistrictService) {}
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi district yaratish' })
   @ApiResponse({
     status: 201,
@@ -40,6 +42,7 @@ export class DistrictController {
     return this.districtService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Id orqali districtni yangilash' })
   @ApiParam({
     name: 'id',
@@ -60,13 +63,17 @@ export class DistrictController {
     return this.districtService.update(+id, updateDistrictDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Id orqali districtni o'chirish" })
   @ApiParam({
     name: 'id',
     description: 'District unikal ID',
     example: 1,
   })
-  @ApiResponse({ status: 200, description: "District muvaffaqiyatli o'chirildi." })
+  @ApiResponse({
+    status: 200,
+    description: "District muvaffaqiyatli o'chirildi.",
+  })
   @ApiResponse({ status: 404, description: 'District topilmadi.' })
   @Delete(':id')
   remove(@Param('id') id: string) {
