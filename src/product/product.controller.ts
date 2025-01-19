@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,12 +16,14 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from './models/product.model';
 import { PaginationDto } from './dto/pagination.dto';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('Mahsulotlar')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi mahsulot yaratish' })
   @ApiResponse({
     status: 201,
@@ -121,6 +124,7 @@ export class ProductController {
     return this.productService.findOne(+id);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Mahsulotni yangilash' })
   @ApiResponse({
     status: 200,
@@ -135,6 +139,7 @@ export class ProductController {
     return this.productService.update(+id, updateProductDto);
   }
 
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Mahsulotni o'chirish" })
   @ApiResponse({
     status: 200,

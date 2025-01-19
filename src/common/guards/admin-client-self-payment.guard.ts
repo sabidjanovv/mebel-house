@@ -9,14 +9,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
-import { error } from 'console';
-import { NotFoundError } from 'rxjs';
 import { Order } from 'src/order/models/order.model';
+import { Payment } from '../../payment/models/payment.model';
 
 @Injectable()
-export class AdminClientSelfGuard implements CanActivate {
+export class AdminClientPaymentSelfGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
+    @InjectModel(Payment) private readonly paymentModel: typeof Payment,
     @InjectModel(Order) private readonly orderModel: typeof Order,
   ) {}
 
@@ -49,10 +49,12 @@ export class AdminClientSelfGuard implements CanActivate {
           throw new ForbiddenException('Client is not active');
         }
 
-        const order = await this.orderModel.findByPk(req.params.id);
-        if (!order) {
-          throw new NotFoundException('Order not found');
+        const payment = await this.paymentModel.findByPk(req.params.id);
+        if (!payment) {
+          throw new NotFoundException('payment not found');
         }
+
+        const order = await this.orderModel.findByPk(payment.orderId);
 
         if (+order.clientId !== payload.id) {
           throw new ForbiddenException('You are not the owner of this order');
