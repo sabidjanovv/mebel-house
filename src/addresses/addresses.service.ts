@@ -16,7 +16,7 @@ export class AddressesService {
   }
 
   async findAll() {
-    return await this.addressModel.findAll();
+    return await this.addressModel.findAll({include:{all:true}});
   }
 
   async findOne(id: number) {

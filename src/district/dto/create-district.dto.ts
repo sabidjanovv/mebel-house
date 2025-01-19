@@ -13,5 +13,5 @@ export class CreateDistrictDto {
     @ApiProperty({ example: 1, description: "Region ID"})
     @IsNotEmpty({ message: "Region ID is required" })
     @IsNumber({}, { message: "Region ID must be a number" })
-    regionID: number;
+    regionId: number;
 }
