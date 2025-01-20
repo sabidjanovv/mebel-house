@@ -24,10 +24,10 @@ export class CreateAdminDto {
 
   @ApiProperty({
     description: 'Admin phone number',
-    example: '+998-90-123-45-67',
+    example: '+998901234567',
   })
   @Matches(/^\+998[0-9]{9}$/, {
-    message: 'Invalid phone number format. Correct format: +998-XX-XXX-XX-XX',
+    message: 'Invalid phone number format. Correct format: +998XXXXXXXXX',
   })
   phone_number: string;
 
