@@ -27,8 +27,8 @@ async function start() {
             'http://localhost:5173',
             'http://localhost:3001',
             'http://localhost:3011',
-            'http://167.71.195.218:3011',
-            'https://167.71.195.218:3011',
+            'http://167.71.195.218:3001',
+            'https://167.71.195.218:3001',
             'https://sabidjanovv.uz',
           ];
           if (!origin || allowedOrigins.includes(origin)) {
