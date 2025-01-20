@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './common/helpers/winston-logging';
@@ -21,7 +21,26 @@ async function start() {
     app.useGlobalFilters(new AllExceptionsFilter());
     // app.useGlobalPipes(new CustomValidationPipe())
 
-    app.enableCors();
+      app.enableCors({
+        origin: (origin, callback) => {
+          const allowedOrigins = [
+            'http://localhost:5173',
+            'http://localhost:3001',
+            'http://localhost:3011',
+            'http://167.71.195.218:3011',
+            'https://167.71.195.218:3011',
+            'https://sabidjanovv.uz',
+          ];
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            callback(new BadRequestException('Not allowed by CORS'));
+          }
+        },
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+      });
+
 
     const config = new DocumentBuilder()
       .setTitle('Mebel House')
