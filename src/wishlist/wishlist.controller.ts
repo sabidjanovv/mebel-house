@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -50,7 +59,10 @@ export class WishlistController {
     status: 200,
     description: 'Client likes retrieved successfully',
   })
-  @ApiResponse({ status: 404, description: 'Client not found or no likes found' })
+  @ApiResponse({
+    status: 404,
+    description: 'Client not found or no likes found',
+  })
   findByClientId(@Param('id') id: string) {
     return this.wishlistService.findByClientId(+id);
   }
