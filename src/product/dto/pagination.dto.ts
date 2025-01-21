@@ -29,24 +29,24 @@ export class PaginationDto {
   @IsString()
   status?: 'pending' | 'processing' | 'shipped' | 'cancelled';
 
-  // @ApiPropertyOptional({
-  //   description: 'Order by name',
-  //   example: 'asc',
-  //   enum: ['asc', 'desc'],
-  // })
-  // @IsOptional()
-  // @IsString()
-  // price?: 'asc' | 'desc';
+  @ApiPropertyOptional({
+    description: 'Order by name',
+    example: 'asc',
+    enum: ['asc', 'desc'],
+  })
+  @IsOptional()
+  @IsString()
+  price?: 'asc' | 'desc';
 
   @ApiPropertyOptional({ description: 'Minimum price filter', example: 100 })
   @IsOptional()
-  @Type(() => Number) // Convert to number
+  @Type(() => Number) 
   @IsNumber({}, { message: 'minPrice must be a valid number' })
   minPrice?: number;
 
   @ApiPropertyOptional({ description: 'Maximum price filter', example: 1000 })
   @IsOptional()
-  @Type(() => Number) // Convert to number
+  @Type(() => Number) 
   @IsNumber({}, { message: 'maxPrice must be a valid number' })
   maxPrice?: number;
 
@@ -55,13 +55,13 @@ export class PaginationDto {
     example: 1,
   })
   @IsOptional()
-  @Type(() => Number) // Convert to number
+  @Type(() => Number) 
   @IsNumber({}, { message: 'page must be a valid number' })
   page?: number;
 
   @ApiPropertyOptional({ description: 'Number of items per page', example: 10 })
   @IsOptional()
-  @Type(() => Number) // Convert to number
+  @Type(() => Number) 
   @IsNumber({}, { message: 'limit must be a valid number' })
   limit?: number;
 

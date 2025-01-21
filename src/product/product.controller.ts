@@ -23,7 +23,7 @@ import { AdminGuard } from '../common/guards/admin.guard';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(AdminGuard)
+  // @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi mahsulot yaratish' })
   @ApiResponse({
     status: 201,
@@ -47,6 +47,12 @@ export class ProductController {
   })
   @ApiQuery({
     name: 'order',
+    required: false,
+    enum: ['asc', 'desc'],
+    description: 'Order of sorting',
+  })
+  @ApiQuery({
+    name: 'price',
     required: false,
     enum: ['asc', 'desc'],
     description: 'Order of sorting',
@@ -86,12 +92,16 @@ export class ProductController {
     const {
       filter,
       order = 'asc',
+      price = 'asc',
       page = 1,
       limit = 10,
       minPrice = 0,
       maxPrice = Infinity,
       sortBy = 'createdAt',
     } = query;
+
+    console.log(query);
+    
 
     const pageNum = parseInt(page.toString(), 10);
     const limitNum = parseInt(limit.toString(), 10);
@@ -101,6 +111,7 @@ export class ProductController {
     return this.productService.findAll({
       filter,
       order,
+      price,
       page: pageNum,
       limit: limitNum,
       minPrice: minPriceNum,
