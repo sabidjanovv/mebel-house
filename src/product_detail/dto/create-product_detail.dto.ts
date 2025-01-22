@@ -43,14 +43,6 @@ export class CreateProductDetailDto {
   upholstery_material: string;
 
   @ApiProperty({
-    example: 'Qora',
-    description: 'Ustki qoplama rangi',
-  })
-  @IsString()
-  @IsNotEmpty()
-  upholstery_color: string;
-
-  @ApiProperty({
     example: 'Ko‘pik',
     description: 'Ichki material',
   })
