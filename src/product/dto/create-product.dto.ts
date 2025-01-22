@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -7,6 +8,7 @@ import {
   Min,
   Max,
   IsPositive,
+  IsArray,
 } from 'class-validator';
 
 export class CreateProductDto {
@@ -22,6 +24,7 @@ export class CreateProductDto {
     description: 'Mahsulotning narxi',
     example: 500,
   })
+  @Type(() => Number)
   @IsNotEmpty({ message: 'Narx bo‘sh bo‘lmasligi kerak' })
   @IsNumber({}, { message: 'Narx raqam bo‘lishi kerak' })
   @IsPositive({ message: 'Narx musbat raqam bo‘lishi kerak' })
@@ -33,6 +36,7 @@ export class CreateProductDto {
     required: false,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber({}, { message: 'Chegirma foiz raqam bo‘lishi kerak' })
   @Min(0, { message: 'Chegirma 0 dan kichik bo‘lmasligi kerak' })
   @Max(100, { message: 'Chegirma 100 dan katta bo‘lmasligi kerak' })
@@ -51,6 +55,7 @@ export class CreateProductDto {
     example: 1,
     description: 'Category unikal identifikatori',
   })
+  @Type(() => Number)
   @IsNumber()
   categoryId: number;
 
@@ -58,9 +63,50 @@ export class CreateProductDto {
     example: 1,
     description: 'Maxsulot soni',
   })
+  @Type(() => Number)
   @IsNumber()
-  stock:number;
+  stock: number;
 
   @IsOptional()
+  @Type(() => Number)
   avg_rating?: number;
+
+  @ApiProperty({
+    type: 'array',
+    description: 'Array of image files (images)',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+  })
+  @IsOptional()
+  images: any[];
+
+  @ApiProperty({
+    type: 'array',
+    description: 'Array of tags',
+    items: {
+      type: 'string',
+      example: 'sofa',
+      format: 'binary',
+    },
+    required: true,
+  })
+  @IsArray()
+  @IsOptional()
+  tags: any[];
+
+  @ApiProperty({
+    type: 'array',
+    description: 'Array of tags',
+    items: {
+      type: 'string',
+      example: 'red',
+      format: 'binary',
+    },
+    required: true,
+  })
+  @IsArray()
+  @IsOptional()
+  colors: any[];
 }

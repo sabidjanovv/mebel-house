@@ -14,7 +14,6 @@ import { AddressesModule } from './addresses/addresses.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { ImagesModule } from './images/images.module';
 import { CategoryModule } from './category/category.module';
 import { PaymentModule } from './payment/payment.module';
 import { RegionModule } from './region/region.module';
@@ -27,7 +26,6 @@ import { Order } from './order/models/order.model';
 import { OrderItems } from './order_items/models/order_item.model';
 import { Payment } from './payment/models/payment.model';
 import { Address } from './addresses/models/address.model';
-import { Image } from './images/models/image.model';
 import { OtpModule } from './otp/otp.module';
 import { Otp } from './otp/models/otp.model';
 import { Client } from './client/models/client.model';
@@ -37,9 +35,9 @@ import { Review } from './reviews/models/review.model';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'dist', 'static'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'dist', 'static'),
+    // }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -52,6 +50,12 @@ import { Review } from './reviews/models/review.model';
       sync: { alter: true },
       logging: false,
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'uploads'),
+    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+    }),
     AdminModule,
     AuthModule,
     MailModule,
@@ -61,7 +65,6 @@ import { Review } from './reviews/models/review.model';
     CartModule,
     OrderModule,
     ReviewsModule,
-    ImagesModule,
     CategoryModule,
     PaymentModule,
     RegionModule,

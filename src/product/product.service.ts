@@ -10,25 +10,39 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Product } from './models/product.model';
 import { Op } from 'sequelize';
 import { PaginationDto } from './dto/pagination.dto';
+import { Category } from 'src/category/models/category.model';
+import { deleteFiles, saveFile } from 'src/common/helpers/saveImage';
 
 @Injectable()
 export class ProductService {
-  constructor(@InjectModel(Product) private productModel: typeof Product) {}
+  constructor(
+    @InjectModel(Product) private productModel: typeof Product,
+    @InjectModel(Category) private readonly categoryModel: typeof Category,
+  ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    const { name, description, ...otherFields } = createProductDto;
+  async create(createProductDto: CreateProductDto, images: any[]) {
+
+    const { name, description, categoryId, ...otherFields } = createProductDto;
+    
+    const category = await this.categoryModel.findByPk(categoryId);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
 
     if (!name) {
       throw new BadRequestException('Name is required.');
     }
-    if (!description) {
-      throw new BadRequestException('Description is required.');
-    }
+
+    const fileNames = await Promise.all(
+      images.map((image: any) => saveFile(image)),
+    );
 
     return this.productModel.create({
       ...otherFields,
       name: name.toLowerCase(),
-      description: description.toLowerCase(),
+      description: description?.toLowerCase(),
+      images: fileNames,
+      categoryId,
     });
   }
 
@@ -70,9 +84,9 @@ export class ProductService {
       const { rows: data, count: total } =
         await this.productModel.findAndCountAll({
           where,
-          order:[
-            ["createdAt", order.toUpperCase() === 'ASC'? 'ASC' : 'DESC'],
-            ["price", price.toUpperCase() === 'ASC'? 'ASC' : 'DESC'],
+          order: [
+            ['createdAt', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+            ['price', price.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
           ],
           offset,
           limit,
@@ -100,23 +114,42 @@ export class ProductService {
     return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
-    const { name, description, ...otherFields } = updateProductDto;
-
+  async update(id: number, updateProductDto: UpdateProductDto, images: any[]) {
+    // Mahsulotni ID bo‘yicha topish
+    console.log(updateProductDto);
+    
     const product = await this.productModel.findByPk(id);
+
     if (!product) {
-      throw new NotFoundException(`ID:${id} Product does not exist!`);
+      throw new NotFoundException(`Product with ID ${id} not found.`);
     }
 
-    const updatedFields = {
-      ...otherFields,
-      ...(name && { name: name.toLowerCase() }), // Only update if name is provided
-      ...(description && { description: description.toLowerCase() }), // Only update if description is provided
+    // Yangilanish uchun yangi ma’lumotlarni qo‘shish
+    await product.update(updateProductDto);
+
+    // Agar yangi rasmlar mavjud bo‘lsa
+    if (images && images.length > 0) {
+      // Eski rasmlarni o‘chirish
+      if (product.images && product.images.length > 0) {
+        deleteFiles(product.images);
+      }
+
+      // Yangi rasmlarni saqlash
+      const fileNames = await Promise.all(
+        images.map((image: any) => saveFile(image)),
+      );
+
+      // Yangilangan rasmlarni bazaga saqlash
+      product.images = fileNames;      
+      await product.save();
+    }
+
+    // Javob qaytarish
+    return {
+      statusCode: 200,
+      message: 'Product updated successfully',
+      data: { product },
     };
-
-    await product.update(updatedFields);
-
-    return product;
   }
 
   async remove(id: number) {
