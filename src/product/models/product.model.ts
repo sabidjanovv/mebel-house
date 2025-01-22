@@ -11,7 +11,6 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductDetail } from '../../product_detail/models/product_detail.model';
 import { Category } from '../../category/models/category.model';
-import { Image } from '../../images/models/image.model';
 import { OrderItems } from '../../order_items/models/order_item.model';
 import { CartItems } from '../../cart_items/models/cart_item.model';
 import { Review } from '../../reviews/models/review.model';
@@ -24,7 +23,10 @@ interface ICreationProductAttr {
   description: string;
   categoryId: number;
   stock: number;
-  avg_rating:number;
+  avg_rating: number;
+  images: string[];
+  tags: string[];
+  colors: string[];
 }
 
 @Table({ tableName: 'product' })
@@ -92,7 +94,6 @@ export class Product extends Model<Product, ICreationProductAttr> {
   })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
   })
   description: string;
 
@@ -118,11 +119,41 @@ export class Product extends Model<Product, ICreationProductAttr> {
   })
   avg_rating?: number;
 
+  @ApiProperty({
+    description: 'Mahsulotning rasmlari',
+    example: ['image1.jpg', 'image2.jpg'],
+    required: false,
+  })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+  })
+  images: string[];
+
+  @ApiProperty({
+    description: 'Mahsulotning taglari',
+    example: ['furnitture', 'sofa'],
+    required: false,
+  })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+  })
+  tags: string[];
+
+  @ApiProperty({
+    description: 'Mahsulotning ranglari',
+    example: ['blue', 'red'],
+    required: false,
+  })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+  })
+  colors: string[];
+
   @HasOne(() => ProductDetail)
   productDetail: ProductDetail;
-
-  @HasMany(() => Image)
-  images: Image[];
 
   @HasMany(() => OrderItems)
   orderItems: OrderItems[];

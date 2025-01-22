@@ -6,6 +6,7 @@ import * as cookieParser from 'cookie-parser';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './common/helpers/winston-logging';
 import { AllExceptionsFilter } from './common/helpers/error-handling';
+import { join } from 'path';
 async function start() {
   try {
     const PORT = process.env.PORT || 3030;
@@ -16,8 +17,9 @@ async function start() {
     });
     app.setGlobalPrefix('api');
     app.use(cookieParser());
+console.log(join(__dirname, '..', 'uploads'));
 
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe({transform:true}));
     app.useGlobalFilters(new AllExceptionsFilter());
     // app.useGlobalPipes(new CustomValidationPipe())
 

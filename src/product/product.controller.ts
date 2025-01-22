@@ -9,6 +9,8 @@ import {
   Query,
   BadRequestException,
   UseGuards,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -17,22 +19,29 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Product } from './models/product.model';
 import { PaginationDto } from './dto/pagination.dto';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { FormDataDto } from './dto/form-data.dto';
+import { UpdateFormDto } from './dto/update-form.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Mahsulotlar')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  // @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Yangi mahsulot yaratish' })
-  @ApiResponse({
-    status: 201,
-    description: 'Yangi mahsulot muvaffaqiyatli yaratildi.',
-    type: Product,
-  })
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  @UseInterceptors(FilesInterceptor('images'))
+  async create(
+    @Body() formDataDto: FormDataDto,
+    @UploadedFiles() images: any[],
+  ) {
+    
+    const tags = formDataDto.tags ? formDataDto.tags.split(',') : [];
+    const colors = formDataDto.colors ? formDataDto.colors.split(',') : [];
+
+    return await this.productService.create(
+      { ...formDataDto, tags, colors },
+      images,
+    );
   }
 
   @Get()
@@ -87,7 +96,6 @@ export class ProductController {
   })
   @ApiResponse({ status: 200, description: 'List of products' })
   async findAll(@Query() query: PaginationDto) {
-    // console.log('Received query:', query);
 
     const {
       filter,
@@ -100,6 +108,7 @@ export class ProductController {
       sortBy = 'createdAt',
     } = query;
 
+    console.log(query);
 
     const pageNum = parseInt(page.toString(), 10);
     const limitNum = parseInt(limit.toString(), 10);
@@ -134,18 +143,43 @@ export class ProductController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Mahsulotni yangilash' })
-  @ApiResponse({
-    status: 200,
-    description: 'Mahsulot muvaffaqiyatli yangilandi.',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Mahsulot topilmadi.',
-  })
+  @ApiOperation({ summary: 'Update a product by ID' })
+  @ApiResponse({ status: 200, description: 'Product updated successfully.' })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      fileFilter: (req, file, callback) => {
+        const allowedTypes = /jpeg|jpg|png|gif|avif/;
+        const extname = allowedTypes.test(file.originalname.toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        if (extname && mimetype) {
+          callback(null, true);
+        } else {
+          callback(
+            new BadRequestException('Only image files are allowed!'),
+            false,
+          );
+        }
+      },
+      limits: {
+        fileSize: 3 * 1024 * 1024,
+      },
+    }),
+  )
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateFormDto: UpdateFormDto,
+    @UploadedFiles() images: any[],
+  ) {
+
+    const tags = updateFormDto.tags.split(',');
+    const colors = updateFormDto.colors.split(',');
+    return this.productService.update(
+      +id,
+      { ...updateFormDto, tags, colors },
+      images,
+    );
   }
 
   @UseGuards(AdminGuard)
