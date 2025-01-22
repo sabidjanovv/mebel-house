@@ -99,8 +99,8 @@ export class ProductController {
 
     const {
       filter,
-      order = 'asc',
-      price = 'asc',
+      order = !query.order && !query.price ? 'desc' : undefined,
+      price = !query.order && !query.price ? 'asc' : undefined,
       page = 1,
       limit = 10,
       minPrice = 0,

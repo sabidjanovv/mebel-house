@@ -54,25 +54,23 @@ export class ProductService {
   }> {
     const {
       filter,
-      order = 'desc',
+      order,
       page = 1,
       limit = 10,
       minPrice = 0,
       maxPrice = Infinity,
       sortBy = 'createdAt', // Default field for sorting
-      price = 'desc',
+      price,
     } = query;
 
     const offset = (page - 1) * limit;
 
     const where: any = {};
 
-    // Add price range to where clause
     if (minPrice || maxPrice) {
       where.price = { [Op.between]: [minPrice, maxPrice] };
     }
 
-    // Add filter to where clause
     if (filter) {
       where[Op.or] = [
         { name: { [Op.like]: `%${filter}%` } },
@@ -87,6 +85,12 @@ export class ProductService {
           order: [
             ['createdAt', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
             ['price', price.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
+
+            [
+              order ? 'createdAt' : 'price',
+              (order || price).toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
+            ],
+            // ['price', price.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
           ],
           offset,
           limit,
