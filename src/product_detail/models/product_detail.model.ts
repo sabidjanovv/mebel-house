@@ -15,7 +15,6 @@ interface ICreationAttr {
   secondary_material: string;
   configuration: string;
   upholstery_material: string;
-  upholstery_color: string;
   filling_material: string;
   finish_type: string;
   adjustable_headrest: string;
@@ -97,16 +96,6 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
     allowNull: false,
   })
   upholstery_material: string;
-
-  @ApiProperty({
-    example: 'Qora',
-    description: 'Ustki qoplama rangi',
-  })
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  upholstery_color: string;
 
   @ApiProperty({
     example: 'Ko‘pik',

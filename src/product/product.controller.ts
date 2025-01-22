@@ -108,7 +108,6 @@ export class ProductController {
       sortBy = 'createdAt',
     } = query;
 
-    console.log(query);
 
     const pageNum = parseInt(page.toString(), 10);
     const limitNum = parseInt(limit.toString(), 10);
