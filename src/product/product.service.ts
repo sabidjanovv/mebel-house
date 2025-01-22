@@ -21,9 +21,8 @@ export class ProductService {
   ) {}
 
   async create(createProductDto: CreateProductDto, images: any[]) {
-
     const { name, description, categoryId, ...otherFields } = createProductDto;
-    
+
     const category = await this.categoryModel.findByPk(categoryId);
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -83,9 +82,6 @@ export class ProductService {
         await this.productModel.findAndCountAll({
           where,
           order: [
-            ['createdAt', order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
-            ['price', price.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'],
-
             [
               order ? 'createdAt' : 'price',
               (order || price).toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
@@ -121,7 +117,7 @@ export class ProductService {
   async update(id: number, updateProductDto: UpdateProductDto, images: any[]) {
     // Mahsulotni ID bo‘yicha topish
     console.log(updateProductDto);
-    
+
     const product = await this.productModel.findByPk(id);
 
     if (!product) {
@@ -144,7 +140,7 @@ export class ProductService {
       );
 
       // Yangilangan rasmlarni bazaga saqlash
-      product.images = fileNames;      
+      product.images = fileNames;
       await product.save();
     }
 
