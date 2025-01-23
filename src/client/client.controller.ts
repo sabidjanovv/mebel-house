@@ -80,7 +80,7 @@ export class ClientController {
     return this.clientService.update(+id, updateClientDto);
   }
 
-  @UseGuards(ClientSelfGuard)
+  @UseGuards(AdminGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a client' })
   @ApiParam({ name: 'id', description: 'Client unique identifier' })
