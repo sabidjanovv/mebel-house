@@ -31,7 +31,7 @@ console.log(join(__dirname, '..', 'uploads'));
             'http://localhost:3011',
             'http://167.71.195.218:3001',
             'https://167.71.195.218:3001',
-            'https://sabidjanovv.uz',
+            'https://sabidjanov.uz',
           ];
           if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
