@@ -408,9 +408,12 @@ export class AuthService {
 
     const user = await this.clientModel.findOne({ where: { email } });
 
+    const tokens = await this.generateTokenClient(user);
+
     return {
       message: 'OTP successfully confirmed',
       user: user,
+      access_token: tokens.access_token
     };
   }
 
