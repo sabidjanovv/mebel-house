@@ -316,7 +316,7 @@ export class AuthService {
     ).toString('base64');
 
     return {
-      message: `OTP code has been sent to ${email}`,
+      email,
       verification_key: encodedData,
     };
   }
