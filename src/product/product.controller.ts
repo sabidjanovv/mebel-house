@@ -148,7 +148,7 @@ export class ProductController {
   @UseInterceptors(
     FilesInterceptor('images', 10, {
       fileFilter: (req, file, callback) => {
-        const allowedTypes = /jpeg|jpg|png|gif|avif/;
+        const allowedTypes = /jpeg|jpg|png|gif|webp|avif/;
         const extname = allowedTypes.test(file.originalname.toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
         if (extname && mimetype) {
