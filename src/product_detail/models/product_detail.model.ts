@@ -38,7 +38,7 @@ interface ICreationAttr {
 export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   @ApiProperty({
     example: 1,
-    description: 'Mahsulot tafsilotlari ID raqami',
+    description: 'Product details ID number',
   })
   @Column({
     type: DataType.INTEGER,
@@ -48,8 +48,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   id: number;
 
   @ApiProperty({
-    example: '1 dona',
-    description: 'Sotuv to‘plami tarkibi',
+    example: '1 piece',
+    description: 'Sales package composition',
   })
   @Column({
     type: DataType.STRING,
@@ -59,7 +59,7 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
 
   @ApiProperty({
     example: 'XYZ123',
-    description: 'Model raqami',
+    description: 'Model number',
   })
   @Column({
     type: DataType.STRING,
@@ -68,8 +68,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   model_number: string;
 
   @ApiProperty({
-    example: 'Metall',
-    description: 'Ikkinchi darajali material',
+    example: 'Metal',
+    description: 'Secondary material',
   })
   @Column({
     type: DataType.STRING,
@@ -78,8 +78,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   secondary_material: string;
 
   @ApiProperty({
-    example: 'Modulli',
-    description: 'Konfiguratsiya turi',
+    example: 'Modular',
+    description: 'Configuration type',
   })
   @Column({
     type: DataType.STRING,
@@ -88,8 +88,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   configuration: string;
 
   @ApiProperty({
-    example: 'Charm',
-    description: 'Ustki qoplama materiali',
+    example: 'Leather',
+    description: 'Upholstery material',
   })
   @Column({
     type: DataType.STRING,
@@ -98,8 +98,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   upholstery_material: string;
 
   @ApiProperty({
-    example: 'Ko‘pik',
-    description: 'Ichki material',
+    example: 'Foam',
+    description: 'Filling material',
   })
   @Column({
     type: DataType.STRING,
@@ -108,8 +108,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   filling_material: string;
 
   @ApiProperty({
-    example: 'Yorqin',
-    description: 'Tugatish turi',
+    example: 'Glossy',
+    description: 'Finish type',
   })
   @Column({
     type: DataType.STRING,
@@ -118,8 +118,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   finish_type: string;
 
   @ApiProperty({
-    example: 'Ha',
-    description: 'Bosh tayanchi moslashtiriladimi',
+    example: 'Yes',
+    description: 'Is the headrest adjustable?',
   })
   @Column({
     type: DataType.STRING,
@@ -129,7 +129,7 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
 
   @ApiProperty({
     example: '120 kg',
-    description: 'Maksimal yuk sig‘imi',
+    description: 'Maximum load capacity',
   })
   @Column({
     type: DataType.STRING,
@@ -138,8 +138,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   maximum_load_capacity: string;
 
   @ApiProperty({
-    example: 'Hindiston',
-    description: 'Ishlab chiqarilgan mamlakat',
+    example: 'India',
+    description: 'Country of manufacture',
   })
   @Column({
     type: DataType.STRING,
@@ -148,8 +148,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   origin_of_manufacture: string;
 
   @ApiProperty({
-    example: '200 sm',
-    description: 'Kengligi',
+    example: '200 cm',
+    description: 'Width',
   })
   @Column({
     type: DataType.STRING,
@@ -158,8 +158,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   width: string;
 
   @ApiProperty({
-    example: '100 sm',
-    description: 'Balandligi',
+    example: '100 cm',
+    description: 'Height',
   })
   @Column({
     type: DataType.STRING,
@@ -168,8 +168,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   height: string;
 
   @ApiProperty({
-    example: '90 sm',
-    description: 'Chuqurligi',
+    example: '90 cm',
+    description: 'Depth',
   })
   @Column({
     type: DataType.STRING,
@@ -179,7 +179,7 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
 
   @ApiProperty({
     example: '50 kg',
-    description: 'Og‘irligi',
+    description: 'Weight',
   })
   @Column({
     type: DataType.STRING,
@@ -188,8 +188,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   weight: string;
 
   @ApiProperty({
-    example: '45 sm',
-    description: 'O‘rindiq balandligi',
+    example: '45 cm',
+    description: 'Seat height',
   })
   @Column({
     type: DataType.STRING,
@@ -198,8 +198,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   seat_height: string;
 
   @ApiProperty({
-    example: '10 sm',
-    description: 'Oyoq balandligi',
+    example: '10 cm',
+    description: 'Leg height',
   })
   @Column({
     type: DataType.STRING,
@@ -208,8 +208,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   leg_height: string;
 
   @ApiProperty({
-    example: '1 yil',
-    description: 'Kafolat xulosasi',
+    example: '1 year',
+    description: 'Warranty summary',
   })
   @Column({
     type: DataType.STRING,
@@ -218,8 +218,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   warranty_summary: string;
 
   @ApiProperty({
-    example: 'Saytga murojaat qiling',
-    description: 'Kafolat xizmati turi',
+    example: 'Contact website',
+    description: 'Warranty service type',
   })
   @Column({
     type: DataType.STRING,
@@ -228,8 +228,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   warranty_service_type: string;
 
   @ApiProperty({
-    example: 'Ishlab chiqarishdagi nuqsonlar',
-    description: 'Kafolatga kiruvchi holatlar',
+    example: 'Manufacturing defects',
+    description: 'What is covered by warranty',
   })
   @Column({
     type: DataType.STRING,
@@ -238,8 +238,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   covered_in_warranty: string;
 
   @ApiProperty({
-    example: 'Foydalanuvchi tomonidan zarar yetkazilgan holatlar',
-    description: 'Kafolatga kirmaydigan holatlar',
+    example: 'Damage caused by user',
+    description: 'What is not covered by warranty',
   })
   @Column({
     type: DataType.STRING,
@@ -248,8 +248,8 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
   not_covered_in_warranty: string;
 
   @ApiProperty({
-    example: '1 yil',
-    description: 'Ichki kafolat muddati',
+    example: '1 year',
+    description: 'Domestic warranty period',
   })
   @Column({
     type: DataType.STRING,
@@ -261,7 +261,7 @@ export class ProductDetail extends Model<ProductDetail, ICreationAttr> {
 
   @ApiProperty({
     example: 1,
-    description: 'Product unikal identifikatori',
+    description: 'Product unique identifier',
   })
   @ForeignKey(() => Product)
   @Column({

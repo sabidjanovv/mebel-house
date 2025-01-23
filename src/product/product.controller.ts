@@ -23,7 +23,7 @@ import { FormDataDto } from './dto/form-data.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('Mahsulotlar')
+@ApiTags('Products')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -34,7 +34,6 @@ export class ProductController {
     @Body() formDataDto: FormDataDto,
     @UploadedFiles() images: any[],
   ) {
-    
     const tags = formDataDto.tags ? formDataDto.tags.split(',') : [];
     const colors = formDataDto.colors ? formDataDto.colors.split(',') : [];
 
@@ -96,7 +95,6 @@ export class ProductController {
   })
   @ApiResponse({ status: 200, description: 'List of products' })
   async findAll(@Query() query: PaginationDto) {
-
     const {
       filter,
       order = !query.order && !query.price ? 'desc' : undefined,
@@ -107,7 +105,6 @@ export class ProductController {
       maxPrice = Infinity,
       sortBy = 'createdAt',
     } = query;
-
 
     const pageNum = parseInt(page.toString(), 10);
     const limitNum = parseInt(limit.toString(), 10);
@@ -126,15 +123,15 @@ export class ProductController {
     });
   }
 
-  @ApiOperation({ summary: 'Mahsulotni ID orqali olish' })
+  @ApiOperation({ summary: 'Retrieve a product by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Berilgan IDga ega mahsulot.',
+    description: 'Product with the specified ID.',
     type: Product,
   })
   @ApiResponse({
     status: 404,
-    description: 'Mahsulot topilmadi.',
+    description: 'Product not found.',
   })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -171,7 +168,6 @@ export class ProductController {
     @Body() updateFormDto: UpdateFormDto,
     @UploadedFiles() images: any[],
   ) {
-
     const tags = updateFormDto.tags.split(',');
     const colors = updateFormDto.colors.split(',');
     return this.productService.update(
@@ -182,14 +178,14 @@ export class ProductController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: "Mahsulotni o'chirish" })
+  @ApiOperation({ summary: 'Delete a product' })
   @ApiResponse({
     status: 200,
-    description: "Mahsulot muvaffaqiyatli o'chirildi.",
+    description: 'Product deleted successfully.',
   })
   @ApiResponse({
     status: 404,
-    description: 'Mahsulot topilmadi.',
+    description: 'Product not found.',
   })
   @Delete(':id')
   remove(@Param('id') id: string) {

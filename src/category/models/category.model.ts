@@ -11,7 +11,7 @@ interface ICreationCategoryAttr {
 export class Category extends Model<Category, ICreationCategoryAttr> {
   @ApiProperty({
     example: 1,
-    description: 'Kategoriya ID raqami',
+    description: 'Category ID number',
   })
   @Column({
     type: DataType.INTEGER,
@@ -21,8 +21,8 @@ export class Category extends Model<Category, ICreationCategoryAttr> {
   id: number;
 
   @ApiProperty({
-    example: 'Qurilmalar',
-    description: 'Kategoriya nomi',
+    example: 'Devices',
+    description: 'Category name',
   })
   @Column({
     type: DataType.STRING,
@@ -31,8 +31,8 @@ export class Category extends Model<Category, ICreationCategoryAttr> {
   name: string;
 
   @ApiProperty({
-    example: 'Qurilmalar va gadjetlar',
-    description: 'Kategoriya tavsifi',
+    example: 'Devices and gadgets',
+    description: 'Category description',
   })
   @Column({
     type: DataType.STRING,

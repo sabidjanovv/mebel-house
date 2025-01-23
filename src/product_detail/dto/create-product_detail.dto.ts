@@ -3,8 +3,8 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateProductDetailDto {
   @ApiProperty({
-    example: '1 dona',
-    description: 'Sotuv to‘plami tarkibi',
+    example: '1 piece',
+    description: 'Sales package contents',
   })
   @IsString()
   @IsNotEmpty()
@@ -12,55 +12,55 @@ export class CreateProductDetailDto {
 
   @ApiProperty({
     example: 'XYZ123',
-    description: 'Model raqami',
+    description: 'Model number',
   })
   @IsString()
   @IsNotEmpty()
   model_number: string;
 
   @ApiProperty({
-    example: 'Metall',
-    description: 'Ikkinchi darajali material',
+    example: 'Metal',
+    description: 'Secondary material',
   })
   @IsString()
   @IsNotEmpty()
   secondary_material: string;
 
   @ApiProperty({
-    example: 'Modulli',
-    description: 'Konfiguratsiya turi',
+    example: 'Modular',
+    description: 'Configuration type',
   })
   @IsString()
   @IsNotEmpty()
   configuration: string;
 
   @ApiProperty({
-    example: 'Charm',
-    description: 'Ustki qoplama materiali',
+    example: 'Leather',
+    description: 'Upholstery material',
   })
   @IsString()
   @IsNotEmpty()
   upholstery_material: string;
 
   @ApiProperty({
-    example: 'Ko‘pik',
-    description: 'Ichki material',
+    example: 'Foam',
+    description: 'Filling material',
   })
   @IsString()
   @IsNotEmpty()
   filling_material: string;
 
   @ApiProperty({
-    example: 'Yorqin',
-    description: 'Tugatish turi',
+    example: 'Glossy',
+    description: 'Finish type',
   })
   @IsString()
   @IsNotEmpty()
   finish_type: string;
 
   @ApiProperty({
-    example: 'Ha',
-    description: 'Bosh tayanchi moslashtiriladimi',
+    example: 'Yes',
+    description: 'Is the headrest adjustable',
   })
   @IsString()
   @IsNotEmpty()
@@ -68,39 +68,39 @@ export class CreateProductDetailDto {
 
   @ApiProperty({
     example: '120 kg',
-    description: 'Maksimal yuk sig‘imi',
+    description: 'Maximum load capacity',
   })
   @IsString()
   @IsNotEmpty()
   maximum_load_capacity: string;
 
   @ApiProperty({
-    example: 'Hindiston',
-    description: 'Ishlab chiqarilgan mamlakat',
+    example: 'India',
+    description: 'Country of manufacture',
   })
   @IsString()
   @IsNotEmpty()
   origin_of_manufacture: string;
 
   @ApiProperty({
-    example: '200 sm',
-    description: 'Kengligi',
+    example: '200 cm',
+    description: 'Width',
   })
   @IsString()
   @IsNotEmpty()
   width: string;
 
   @ApiProperty({
-    example: '100 sm',
-    description: 'Balandligi',
+    example: '100 cm',
+    description: 'Height',
   })
   @IsString()
   @IsNotEmpty()
   height: string;
 
   @ApiProperty({
-    example: '90 sm',
-    description: 'Chuqurligi',
+    example: '90 cm',
+    description: 'Depth',
   })
   @IsString()
   @IsNotEmpty()
@@ -108,63 +108,63 @@ export class CreateProductDetailDto {
 
   @ApiProperty({
     example: '50 kg',
-    description: 'Og‘irligi',
+    description: 'Weight',
   })
   @IsString()
   @IsNotEmpty()
   weight: string;
 
   @ApiProperty({
-    example: '45 sm',
-    description: 'O‘rindiq balandligi',
+    example: '45 cm',
+    description: 'Seat height',
   })
   @IsString()
   @IsNotEmpty()
   seat_height: string;
 
   @ApiProperty({
-    example: '10 sm',
-    description: 'Oyoq balandligi',
+    example: '10 cm',
+    description: 'Leg height',
   })
   @IsString()
   @IsNotEmpty()
   leg_height: string;
 
   @ApiProperty({
-    example: '1 yil',
-    description: 'Kafolat xulosasi',
+    example: '1 year',
+    description: 'Warranty summary',
   })
   @IsString()
   @IsNotEmpty()
   warranty_summary: string;
 
   @ApiProperty({
-    example: 'Saytga murojaat qiling',
-    description: 'Kafolat xizmati turi',
+    example: 'Visit the website',
+    description: 'Warranty service type',
   })
   @IsString()
   @IsNotEmpty()
   warranty_service_type: string;
 
   @ApiProperty({
-    example: 'Ishlab chiqarishdagi nuqsonlar',
-    description: 'Kafolatga kiruvchi holatlar',
+    example: 'Manufacturing defects',
+    description: 'Covered under warranty',
   })
   @IsString()
   @IsNotEmpty()
   covered_in_warranty: string;
 
   @ApiProperty({
-    example: 'Foydalanuvchi tomonidan zarar yetkazilgan holatlar',
-    description: 'Kafolatga kirmaydigan holatlar',
+    example: 'Damages caused by user',
+    description: 'Not covered under warranty',
   })
   @IsString()
   @IsNotEmpty()
   not_covered_in_warranty: string;
 
   @ApiProperty({
-    example: '1 yil',
-    description: 'Ichki kafolat muddati',
+    example: '1 year',
+    description: 'Domestic warranty period',
   })
   @IsString()
   @IsNotEmpty()
@@ -172,7 +172,7 @@ export class CreateProductDetailDto {
 
   @ApiProperty({
     example: 1,
-    description: 'Product unikal identifikatori',
+    description: 'Product unique identifier',
   })
   @IsNumber()
   productId: number;

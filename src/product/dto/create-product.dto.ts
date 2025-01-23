@@ -13,47 +13,47 @@ import {
 
 export class CreateProductDto {
   @ApiProperty({
-    description: 'Mahsulotning nomi',
-    example: 'Mebel',
+    description: 'Product name',
+    example: 'Furniture',
   })
-  @IsNotEmpty({ message: "Mahsulot nomi bo'sh bo'lmasligi kerak" })
-  @IsString({ message: "Mahsulot nomi matn bo'lishi kerak" })
+  @IsNotEmpty()
+  @IsString()
   name: string;
 
   @ApiProperty({
-    description: 'Mahsulotning narxi',
+    description: 'Product price',
     example: 500,
   })
   @Type(() => Number)
-  @IsNotEmpty({ message: 'Narx bo‘sh bo‘lmasligi kerak' })
-  @IsNumber({}, { message: 'Narx raqam bo‘lishi kerak' })
-  @IsPositive({ message: 'Narx musbat raqam bo‘lishi kerak' })
+  @IsNotEmpty({ message: 'Price must not be empty' })
+  @IsNumber({}, { message: 'Price must be a number' })
+  @IsPositive({ message: 'Price must be a positive number' })
   price: number;
 
   @ApiProperty({
-    description: 'Chegirma foizda (%), 0 dan 100 gacha',
+    description: 'Discount percentage (0 to 100)',
     example: 10,
     required: false,
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber({}, { message: 'Chegirma foiz raqam bo‘lishi kerak' })
-  @Min(0, { message: 'Chegirma 0 dan kichik bo‘lmasligi kerak' })
-  @Max(100, { message: 'Chegirma 100 dan katta bo‘lmasligi kerak' })
+  @IsNumber({}, { message: 'Discount must be a number' })
+  @Min(0, { message: 'Discount must not be less than 0' })
+  @Max(100, { message: 'Discount must not exceed 100' })
   discount: number;
 
   @ApiProperty({
-    description: 'Mahsulotning tavsifi',
-    example: 'Yotsangiz yumshoqlikni his qilasz',
+    description: 'Product description',
+    example: 'Experience softness when you lie down',
     required: false,
   })
   @IsOptional()
-  @IsString({ message: 'Tavsif matn bo‘lishi kerak' })
+  @IsString({ message: 'Description must be a string' })
   description: string;
 
   @ApiProperty({
     example: 1,
-    description: 'Category unikal identifikatori',
+    description: 'Category unique identifier',
   })
   @Type(() => Number)
   @IsNumber()
@@ -61,7 +61,7 @@ export class CreateProductDto {
 
   @ApiProperty({
     example: 1,
-    description: 'Maxsulot soni',
+    description: 'Stock quantity',
   })
   @Type(() => Number)
   @IsNumber()
@@ -98,7 +98,7 @@ export class CreateProductDto {
 
   @ApiProperty({
     type: 'array',
-    description: 'Array of tags',
+    description: 'Array of colors',
     items: {
       type: 'string',
       example: 'red',

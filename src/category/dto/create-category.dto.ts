@@ -3,16 +3,16 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({
-    example: 'Elektronika',
-    description: 'Kategoriya nomi',
+    example: 'Electronics',
+    description: 'Name of the category',
   })
   @IsString()
   @IsNotEmpty()
   name: string;
 
   @ApiProperty({
-    example: 'Qurilmalar va gadjetlar',
-    description: 'Kategoriya tavsifi',
+    example: 'Devices and gadgets',
+    description: 'Description of the category',
   })
   @IsString()
   @IsNotEmpty()

@@ -33,7 +33,7 @@ interface ICreationProductAttr {
 export class Product extends Model<Product, ICreationProductAttr> {
   @ApiProperty({
     example: 1,
-    description: 'Mahsulot ID raqami',
+    description: 'Unique identifier of the product',
   })
   @Column({
     type: DataType.INTEGER,
@@ -44,7 +44,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
 
   @ApiProperty({
     example: 1,
-    description: 'Category unikal identifikatori',
+    description: 'Unique identifier of the category',
   })
   @ForeignKey(() => Category)
   @Column({
@@ -57,8 +57,8 @@ export class Product extends Model<Product, ICreationProductAttr> {
   category: Category;
 
   @ApiProperty({
-    description: 'Mahsulotning nomi',
-    example: 'Mebel',
+    description: 'Name of the product',
+    example: 'Furniture',
   })
   @Column({
     type: DataType.STRING,
@@ -67,7 +67,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   name: string;
 
   @ApiProperty({
-    description: 'Mahsulotning narxi',
+    description: 'Price of the product',
     example: 500,
   })
   @Column({
@@ -77,7 +77,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   price: number;
 
   @ApiProperty({
-    description: 'Chegirma foizda (%), 0 dan 100 gacha',
+    description: 'Discount percentage (0 to 100)',
     example: 10,
     required: false,
   })
@@ -88,8 +88,8 @@ export class Product extends Model<Product, ICreationProductAttr> {
   discount: number;
 
   @ApiProperty({
-    description: 'Mahsulotning tavsifi',
-    example: 'Yotsangiz yumshoqlikni his qilasz',
+    description: 'Description of the product',
+    example: 'Feel the softness when you lie down',
     required: false,
   })
   @Column({
@@ -98,7 +98,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   description: string;
 
   @ApiProperty({
-    description: 'Chegirma foizda (%), 0 dan 100 gacha',
+    description: 'Number of items in stock',
     example: 10,
     required: false,
   })
@@ -109,7 +109,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   stock: number;
 
   @ApiProperty({
-    description: 'Oqilgan mahsulotlar raqami',
+    description: 'Average rating of the product',
     example: 4.5,
     required: false,
   })
@@ -120,7 +120,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   avg_rating?: number;
 
   @ApiProperty({
-    description: 'Mahsulotning rasmlari',
+    description: 'Images of the product',
     example: ['image1.jpg', 'image2.jpg'],
     required: false,
   })
@@ -131,8 +131,8 @@ export class Product extends Model<Product, ICreationProductAttr> {
   images: string[];
 
   @ApiProperty({
-    description: 'Mahsulotning taglari',
-    example: ['furnitture', 'sofa'],
+    description: 'Tags associated with the product',
+    example: ['furniture', 'sofa'],
     required: false,
   })
   @Column({
@@ -142,7 +142,7 @@ export class Product extends Model<Product, ICreationProductAttr> {
   tags: string[];
 
   @ApiProperty({
-    description: 'Mahsulotning ranglari',
+    description: 'Available colors of the product',
     example: ['blue', 'red'],
     required: false,
   })

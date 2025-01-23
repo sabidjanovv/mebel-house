@@ -15,16 +15,16 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Category } from './models/category.model';
 import { AdminGuard } from '../common/guards/admin.guard';
 
-@ApiTags('Kategoriyalar')
+@ApiTags('Categories')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Yangi kategoriya yaratish' })
+  @ApiOperation({ summary: 'Create a new category' })
   @ApiResponse({
     status: 201,
-    description: 'Yangi kategoriya muvaffaqiyatli yaratildi.',
+    description: 'The category has been successfully created.',
     type: Category,
   })
   @Post()
@@ -32,10 +32,10 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
-  @ApiOperation({ summary: 'Barcha kategoriyalarni olish' })
+  @ApiOperation({ summary: 'Retrieve all categories' })
   @ApiResponse({
     status: 200,
-    description: "Barcha kategoriyalar ro'yxati.",
+    description: 'List of all categories.',
     type: [Category],
   })
   @Get()
@@ -43,10 +43,10 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
-  @ApiOperation({ summary: 'Kategoriya ID orqali olish' })
+  @ApiOperation({ summary: 'Retrieve a category by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Berilgan IDga ega kategoriya.',
+    description: 'The category with the given ID.',
     type: Category,
   })
   @ApiResponse({
@@ -59,14 +59,14 @@ export class CategoryController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Kategoriya yangilash' })
+  @ApiOperation({ summary: 'Update a category' })
   @ApiResponse({
     status: 200,
-    description: 'Kategoriya muvaffaqiyatli yangilandi.',
+    description: 'The category has been successfully updated.',
   })
   @ApiResponse({
     status: 404,
-    description: 'Yangilanish uchun kategoriya topilmadi.',
+    description: 'The category to be updated was not found.',
   })
   @Patch(':id')
   update(
@@ -77,14 +77,14 @@ export class CategoryController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: "Kategoriya o'chirish" })
+  @ApiOperation({ summary: 'Delete a category' })
   @ApiResponse({
     status: 200,
-    description: "Kategoriya muvaffaqiyatli o'chirildi.",
+    description: 'The category has been successfully deleted.',
   })
   @ApiResponse({
     status: 404,
-    description: "O'chirish uchun kategoriya topilmadi.",
+    description: 'The category to be deleted was not found.',
   })
   @Delete(':id')
   remove(@Param('id') id: string) {

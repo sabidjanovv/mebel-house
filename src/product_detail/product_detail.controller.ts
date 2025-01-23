@@ -15,16 +15,16 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductDetail } from './models/product_detail.model';
 import { AdminGuard } from '../common/guards/admin.guard';
 
-@ApiTags('Mahsulot tafsilotlari')
+@ApiTags('Product Details')
 @Controller('product-detail')
 export class ProductDetailController {
   constructor(private readonly productDetailService: ProductDetailService) {}
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Yangi mahsulot tafsilotini yaratish' })
+  @ApiOperation({ summary: 'Create new product detail' })
   @ApiResponse({
     status: 201,
-    description: 'Yangi mahsulot tafsiloti muvaffaqiyatli yaratildi.',
+    description: 'New product detail successfully created.',
     type: ProductDetail,
   })
   @Post()
@@ -32,10 +32,10 @@ export class ProductDetailController {
     return this.productDetailService.create(createProductDetailDto);
   }
 
-  @ApiOperation({ summary: 'Barcha mahsulot tafsilotlarini olish' })
+  @ApiOperation({ summary: 'Get all product details' })
   @ApiResponse({
     status: 200,
-    description: "Barcha mahsulot tafsilotlari ro'yxati.",
+    description: 'List of all product details.',
     type: [ProductDetail],
   })
   @Get()
@@ -43,15 +43,15 @@ export class ProductDetailController {
     return this.productDetailService.findAll();
   }
 
-  @ApiOperation({ summary: 'Mahsulot tafsilotlarini ID orqali olish' })
+  @ApiOperation({ summary: 'Get product details by ID' })
   @ApiResponse({
     status: 200,
-    description: 'Berilgan IDga ega mahsulot tafsilotlari.',
+    description: 'Product details with the given ID.',
     type: ProductDetail,
   })
   @ApiResponse({
     status: 404,
-    description: 'Mahsulot topilmadi.',
+    description: 'Product not found.',
   })
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -59,14 +59,14 @@ export class ProductDetailController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Mahsulot tafsilotlarini yangilash' })
+  @ApiOperation({ summary: 'Update product details' })
   @ApiResponse({
     status: 200,
-    description: 'Mahsulot tafsilotlari muvaffaqiyatli yangilandi.',
+    description: 'Product details successfully updated.',
   })
   @ApiResponse({
     status: 404,
-    description: 'Yangilanish uchun mahsulot tafsilotlari topilmadi.',
+    description: 'Product details not found for update.',
   })
   @Patch(':id')
   update(
@@ -77,14 +77,14 @@ export class ProductDetailController {
   }
 
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: "Mahsulot tafsilotlarini o'chirish" })
+  @ApiOperation({ summary: 'Delete product details' })
   @ApiResponse({
     status: 200,
-    description: "Mahsulot tafsilotlari muvaffaqiyatli o'chirildi.",
+    description: 'Product details successfully deleted.',
   })
   @ApiResponse({
     status: 404,
-    description: "O'chirish uchun mahsulot tafsilotlari topilmadi.",
+    description: 'Product details not found for deletion.',
   })
   @Delete(':id')
   remove(@Param('id') id: string) {
