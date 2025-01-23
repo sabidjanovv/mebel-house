@@ -32,6 +32,7 @@ console.log(join(__dirname, '..', 'uploads'));
             'http://167.71.195.218:3001',
             'https://167.71.195.218:3001',
             'https://sabidjanov.uz',
+            'https://mebel-house.vercel.app',
           ];
           if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
