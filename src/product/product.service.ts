@@ -113,6 +113,29 @@ export class ProductService {
     }
     return product;
   }
+  
+  async getProductsByCategory(
+    categoryId: number,
+    page: number,
+    limit: number,
+  ): Promise<{ data: Product[]; page: number; limit: number; total: number }> {
+    const offset = (page - 1) * limit;
+
+    const { rows: data, count: total } =
+      await this.productModel.findAndCountAll({
+        where: { categoryId },
+        offset,
+        limit,
+        include: { all: true },
+      });
+
+    return {
+      data,
+      page,
+      limit,
+      total,
+    };
+  }
 
   async update(id: number, updateProductDto: UpdateProductDto, images: any[]) {
     // Mahsulotni ID bo‘yicha topish
