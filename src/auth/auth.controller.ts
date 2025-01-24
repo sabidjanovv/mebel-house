@@ -8,6 +8,8 @@ import {
   Get,
   BadRequestException,
   UseGuards,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Admin } from '../admin/models/admin.model';
@@ -185,5 +187,16 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.refreshTokenClient(id, refresh_token, res);
+  }
+
+  @Get('/client-profile')
+  async clientProfileCheck(@Headers('authorization') authorization: string) {
+    // Header dan tokenni ajratib olish
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Authorization token not provided');
+    }
+
+    const access_token = authorization.split(' ')[1]; // "Bearer token" formatini ajratish
+    return await this.authService.clientProfileCheck(access_token);
   }
 }

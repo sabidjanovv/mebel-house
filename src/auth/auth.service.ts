@@ -515,4 +515,40 @@ export class AuthService {
       throw new BadRequestException('Error refreshing token');
     }
   }
+
+  async clientProfileCheck(access_token: string) {
+    try {      
+      const verified_token = await this.jwtService.verify(access_token, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+      });      
+      if (!verified_token) {
+        throw new UnauthorizedException('Invalid token provided');
+      }
+      const client = await this.clientModel.findOne({
+        where: {email:verified_token.email},
+      });      
+      if (!client) {
+        throw new UnauthorizedException(
+          'Client not found with the provided token',
+        );
+      }
+      return {
+        success: true,
+        message: 'Client profile verified successfully',
+        client: {
+          id: client.id,
+          email: client.email,
+          full_name: client.full_name,
+        },
+      };
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Token has expired');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw new UnauthorizedException('Invalid token signature');
+      } else {
+        throw new UnauthorizedException('Authentication failed');
+      }
+    }
+  }
 }
