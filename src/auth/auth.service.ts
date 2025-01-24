@@ -413,7 +413,7 @@ export class AuthService {
     return {
       message: 'OTP successfully confirmed',
       user: user,
-      access_token: tokens.access_token
+      access_token: tokens.access_token,
     };
   }
 
