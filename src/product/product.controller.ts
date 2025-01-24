@@ -34,7 +34,6 @@ export class ProductController {
     @Body() formDataDto: FormDataDto,
     @UploadedFiles() images: any[],
   ) {
-    
     const tags = formDataDto.tags ? formDataDto.tags.split(',') : [];
     const colors = formDataDto.colors ? formDataDto.colors.split(',') : [];
 
@@ -96,7 +95,6 @@ export class ProductController {
   })
   @ApiResponse({ status: 200, description: 'List of products' })
   async findAll(@Query() query: PaginationDto) {
-
     const {
       filter,
       order = !query.order && !query.price ? 'desc' : undefined,
@@ -107,7 +105,6 @@ export class ProductController {
       maxPrice = Infinity,
       sortBy = 'createdAt',
     } = query;
-
 
     const pageNum = parseInt(page.toString(), 10);
     const limitNum = parseInt(limit.toString(), 10);
@@ -141,6 +138,43 @@ export class ProductController {
     return this.productService.findOne(+id);
   }
 
+  @Get('category/:categoryId')
+  @ApiOperation({ summary: 'Retrieve products by category' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of products per page',
+    example: 10,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of products by category',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Category not found or no products available',
+  })
+  async findByCategory(
+    @Param('categoryId') categoryId: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const pageNum = parseInt(page.toString(), 10);
+    const limitNum = parseInt(limit.toString(), 10);
+
+    return this.productService.getProductsByCategory(
+      +categoryId,
+      pageNum,
+      limitNum,
+    );
+  }
+
   @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Update a product by ID' })
   @ApiResponse({ status: 200, description: 'Product updated successfully.' })
@@ -171,7 +205,6 @@ export class ProductController {
     @Body() updateFormDto: UpdateFormDto,
     @UploadedFiles() images: any[],
   ) {
-
     const tags = updateFormDto.tags.split(',');
     const colors = updateFormDto.colors.split(',');
     return this.productService.update(
