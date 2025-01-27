@@ -427,12 +427,16 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
+    if(client.is_active !== false){
+      throw new UnauthorizedException('OTP not confirmed');
+    }
+
     const validPassword = await bcrypt.compare(
       password,
       client.hashed_password,
     );
     if (!validPassword) {
-      throw new UnauthorizedException("Noto'g'ri parol");
+      throw new UnauthorizedException("Password or Email is not valid");
     }
 
     const tokens = await this.generateTokenClient(client);
