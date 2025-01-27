@@ -427,9 +427,44 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
-    // if(client.is_active === false){
-    //   throw new BadRequestException({is_active: client.is_active, message: 'Client is not active'});
-    // }
+    if(client.is_active === false){
+      const otp = otpGenerator.generate(4, {
+        upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+      });
+
+      const email = client.email;
+
+      const isSend = await this.mailService.sendOtp(email, otp);
+
+      if (!isSend) {
+        throw new BadRequestException('OTP yuborishda xatolik yuz berdi.');
+      }
+
+      const now = new Date();
+      const expiration_time = new Date(now.getTime() + 2 * 60000); // 2 minutes
+
+      await this.otpModel.destroy({ where: { email } });
+
+      const newOtp = await this.otpModel.create({
+        id: uuid.v4(),
+        otp,
+        expiration_time,
+        email,
+      });
+
+      const encodedData = Buffer.from(
+        JSON.stringify({
+          email,
+          otp_id: newOtp.id,
+          timestamp: now,
+        }),
+      ).toString('base64');
+      return {
+        verification_key: encodedData,
+      }; 
+    }
 
     const validPassword = await bcrypt.compare(
       password,
