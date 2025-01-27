@@ -62,9 +62,18 @@ export class WishlistService {
     const wishes = await this.wishlistModel.findAll({
       where: { clientId: clientId },
     });
+
+    const products = []
+
+    wishes.forEach(async (wish) => {
+      let product =await this.productModel.findByPk(wish.productId)
+      if (!products[product.id]) {
+        products.push(product)
+      }
+    })
     return {
-      data: wishes,
-      total: wishes.length,
+     data: products,
+     total: products.length,
     };
   }
 
