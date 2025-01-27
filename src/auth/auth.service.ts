@@ -427,7 +427,7 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
-    if(client.is_active !== false){
+    if(client.is_active === false){
       throw new UnauthorizedException('OTP not confirmed');
     }
 
