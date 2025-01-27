@@ -427,9 +427,9 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
-    if(client.is_active === false){
-      throw new UnauthorizedException('OTP not confirmed');
-    }
+    // if(client.is_active === false){
+    //   throw new BadRequestException({is_active: client.is_active, message: 'Client is not active'});
+    // }
 
     const validPassword = await bcrypt.compare(
       password,
@@ -453,6 +453,7 @@ export class AuthService {
     return res.json({
       message: 'Client signed in successfully',
       id: client.id,
+      is_active: client.is_active,
       access_token: tokens.access_token,
     });
   }
