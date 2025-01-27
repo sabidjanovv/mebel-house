@@ -59,21 +59,23 @@ export class WishlistService {
         `User with ID: ${clientId} not found. (Id: ${clientId} bo'lgan foydalanuvchi topilmadi.)`,
       );
     }
+
     const wishes = await this.wishlistModel.findAll({
       where: { clientId: clientId },
     });
 
-    const products = []
+    const products = [];
 
-    wishes.forEach(async (wish) => {
-      let product =await this.productModel.findByPk(wish.productId)
-      if (!products[product.id]) {
-        products.push(product)
+    for (const wish of wishes) {
+      const product = await this.productModel.findByPk(wish.productId);
+      if (product && !products.some((p) => p.id === product.id)) {
+        products.push(product);
       }
-    })
+    }
+
     return {
-     data: products,
-     total: products.length,
+      data: products,
+      total: products.length,
     };
   }
 
