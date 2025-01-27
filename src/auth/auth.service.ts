@@ -379,7 +379,7 @@ export class AuthService {
     );
 
     if (decodedData.email !== email) {
-      throw new BadRequestException('Bu email uchun OTP yuborilmagan.');
+      throw new BadRequestException('An OTP was not sent for this email.');
     }
 
     const otpRecord = await this.otpModel.findOne({
@@ -387,19 +387,19 @@ export class AuthService {
     });
 
     if (!otpRecord) {
-      throw new BadRequestException('OTP mavjud emas.');
+      throw new BadRequestException('OTP does not exist.');
     }
 
     if (otpRecord.verified) {
-      throw new BadRequestException('Bu OTP avval tekshirilgan.');
+      throw new BadRequestException('This OTP has already been verified.');
     }
 
     if (otpRecord.expiration_time < new Date()) {
-      throw new BadRequestException('OTPning vaqti tugagan.');
+      throw new BadRequestException('The OTP has expired.');
     }
 
     if (otpRecord.otp !== otp) {
-      throw new BadRequestException('OTP mos emas.');
+      throw new BadRequestException('The OTP does not match.');
     }
 
     await this.otpModel.update({ verified: true }, { where: { email } });
@@ -427,12 +427,16 @@ export class AuthService {
       throw new UnauthorizedException('client topilmadi');
     }
 
+    if(client.is_active !== false){
+      throw new UnauthorizedException('OTP not confirmed');
+    }
+
     const validPassword = await bcrypt.compare(
       password,
       client.hashed_password,
     );
     if (!validPassword) {
-      throw new UnauthorizedException("Noto'g'ri parol");
+      throw new UnauthorizedException("Password or Email is not valid");
     }
 
     const tokens = await this.generateTokenClient(client);
@@ -447,7 +451,7 @@ export class AuthService {
       { where: { email: email } },
     );
     return res.json({
-      message: 'Tizimga muvaffaqiyatli kirildi',
+      message: 'Client signed in successfully',
       id: client.id,
       access_token: tokens.access_token,
     });
@@ -475,7 +479,7 @@ export class AuthService {
         client.hashed_refresh_token,
       );
       if (!valid_refresh_token) {
-        throw new UnauthorizedException("So'rovda xatolik");
+        throw new UnauthorizedException("Bad request token");
       }
 
       res.clearCookie('refresh_token', {
