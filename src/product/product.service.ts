@@ -45,7 +45,10 @@ export class ProductService {
     });
   }
 
-  async findAll(query: PaginationDto): Promise<{
+  async findAll(
+    query: PaginationDto,
+    token: string,
+  ): Promise<{
     data: Product[];
     page: number;
     limit: number;
@@ -113,7 +116,7 @@ export class ProductService {
     }
     return product;
   }
-  
+
   async getProductsByCategory(
     categoryId: number,
     page: number,

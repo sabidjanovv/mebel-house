@@ -11,6 +11,7 @@ import {
   UseGuards,
   UploadedFiles,
   UseInterceptors,
+  Headers,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -28,6 +29,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseGuards(AdminGuard)
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   async create(
@@ -94,7 +96,14 @@ export class ProductController {
     description: 'Sort by field (e.g., createdAt or id)',
   })
   @ApiResponse({ status: 200, description: 'List of products' })
-  async findAll(@Query() query: PaginationDto) {
+  async findAll(
+    @Query() query: PaginationDto,
+    @Headers('authorization') authorization?: string,
+  ) {
+     let token = null;
+     if (authorization) {
+      token = authorization.replace('Bearer ', '').trim();
+     }
     const {
       filter,
       order = !query.order && !query.price ? 'desc' : undefined,
@@ -111,16 +120,19 @@ export class ProductController {
     const minPriceNum = minPrice ? parseInt(minPrice.toString(), 10) : 0;
     const maxPriceNum = maxPrice ? parseInt(maxPrice.toString(), 10) : Infinity;
 
-    return this.productService.findAll({
-      filter,
-      order,
-      price,
-      page: pageNum,
-      limit: limitNum,
-      minPrice: minPriceNum,
-      maxPrice: maxPriceNum,
-      sortBy,
-    });
+    return this.productService.findAll(
+      {
+        filter,
+        order,
+        price,
+        page: pageNum,
+        limit: limitNum,
+        minPrice: minPriceNum,
+        maxPrice: maxPriceNum,
+        sortBy,
+      },
+      token
+    );
   }
 
   @ApiOperation({ summary: 'Mahsulotni ID orqali olish' })
