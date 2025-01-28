@@ -120,6 +120,17 @@ export class Product extends Model<Product, ICreationProductAttr> {
   avg_rating?: number;
 
   @ApiProperty({
+    description: 'Oqilgan mahsulotlar raqami',
+    example: 4.5,
+    required: false,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
+  isLike?: boolean;
+
+  @ApiProperty({
     description: 'Mahsulotning rasmlari',
     example: ['image1.jpg', 'image2.jpg'],
     required: false,

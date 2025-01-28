@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -27,6 +28,16 @@ export class WishlistController {
   @ApiResponse({ status: 400, description: 'Invalid data' })
   toggle(@Body() createWishlistDto: CreateWishlistDto) {
     return this.wishlistService.toggle(createWishlistDto);
+  }
+
+  @Post('/wishlist/:clientId')
+  @ApiResponse({ status: 201, description: 'Wishlist successfully updated.' })
+  @ApiResponse({ status: 404, description: 'client not found.' })
+  async saveWishlist(
+    @Param('clientId', ParseIntPipe) clientId: number,
+    @Body() wishlist: number[],
+  ) {
+    return this.wishlistService.saveWishList(clientId, wishlist);
   }
 
   // @UseGuards(AdminGuard)
