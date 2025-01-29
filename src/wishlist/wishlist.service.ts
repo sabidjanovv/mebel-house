@@ -117,7 +117,7 @@ export class WishlistService {
     const products = await Promise.all(
       likedProductIds.map(async (item) => {
         return await this.productModel.findOne({
-          where: { id: item },
+          where: { id: +item },
           include: [{ model: this.productModel }],
         });
       }),
