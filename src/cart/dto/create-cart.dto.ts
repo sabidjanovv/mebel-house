@@ -6,7 +6,7 @@ export class CreateCartDto {
     example: 1,
     description: 'Client ID',
   })
-  @IsNotEmpty({ message: "Client ID bo'sh bo'lmasligi kerak" })
-  @IsNumber({}, { message: "Client ID raqam bo'lishi kerak" })
+  @IsNotEmpty({ message: 'Client ID cannot be empty' })
+  @IsNumber({}, { message: 'Client ID must be a number' })
   clientId: number;
 }
