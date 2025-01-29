@@ -114,16 +114,19 @@ export class WishlistService {
     // Fetch products with discount relation
     console.log(likedProductIds); // [2,5,7]
 
-    let products = [];
-    (async function () {
-      for await (let id of likedProductIds) {
-        const product = this.productModel.findOne({
-          where: { id: id },
+    const products = await Promise.all(
+      likedProductIds.map(async (item) => {
+        return await this.productModel.findOne({
+          where: { id: item },
           include: [{ model: this.productModel }],
         });
-        products.push(product);
-      }
-    })();
+      }),
+    );
+
+    // const products = await this.productModel.findAll({
+    //   where: { id: likedProductIds },
+    //   include: [{ model: this.productModel }],
+    // });
 
     // Add isLike field
     const productsWithLikes = products.map((product) => ({
