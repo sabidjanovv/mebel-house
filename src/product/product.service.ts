@@ -72,7 +72,7 @@ export class ProductService {
     let likedProductIds = [];
     if (token) {
       try {
-        const { id } = this.jwtService.decode(token) as { id: string };        
+        const { id } = this.jwtService.decode(token) as { id: string };
         if (id) {
           const likes = await this.wishlistModel.findAll({
             where: { clientId: +id },
@@ -114,8 +114,14 @@ export class ProductService {
 
       const productsWithLikes = data.map((product) => ({
         ...product.get({ plain: true }),
-        isLike: (likedProductIds).includes(+product.id),
+        isLike: likedProductIds.includes(+product.id),
       }));
+
+      productsWithLikes.map((product) => {
+        if (product.discount) {
+          product.price = product.price / (1 - product.discount / 100);
+        }
+      });
 
       return {
         data: productsWithLikes as Product[],
