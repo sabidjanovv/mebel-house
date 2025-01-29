@@ -24,6 +24,7 @@ interface ICreationProductAttr {
   categoryId: number;
   stock: number;
   avg_rating: number;
+  isLike: boolean;
   images: string[];
   tags: string[];
   colors: string[];

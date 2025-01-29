@@ -85,32 +85,43 @@ export class WishlistService {
   //   };
   // }
 
-  async findByClientId(clientId: number) {
+  async findByClientId(
+    clientId: number,
+  ): Promise<{ message: string; data: Partial<Product>[] }> {
     // Validate client existence
     const client = await this.clientModel.findByPk(clientId);
     if (!client) {
       throw new BadRequestException(`Client with ID: ${clientId} not found.`);
     }
 
-    // Fetch wishlist entries for the client
-    const wishlistEntries = await this.wishlistModel.findAll({
+    // Fetch liked products for the client
+    const likes = await this.wishlistModel.findAll({
       where: { clientId },
-      include: [{ model: this.productModel }], // Include associated products
     });
 
-    if (wishlistEntries.length === 0) {
+    const likedProductIds = likes.map((like) => like.productId);
+    if (likedProductIds.length === 0) {
       return {
-        message: 'No products found in the wishlist for this client.',
-        products: [],
+        message: 'No liked products found for this client.',
+        data: [],
       };
     }
 
-    // Format and return the response
-    const products = wishlistEntries.map((entry) => entry.product);
+    // Fetch products with discount relation
+    const products = await this.productModel.findAll({
+      where: { id: likedProductIds },
+      include: [{ model: this.productModel }],
+    });
+
+    // Add isLike field
+    const productsWithLikes = products.map((product) => ({
+      ...product.get({ plain: true }), // Sequelize obyektini oddiy obyektga o'tkazish
+      isLike: likedProductIds.includes(product.id),
+    }));
 
     return {
-      message: 'Wishlist retrieved successfully.',
-      data: products,
+      message: 'All liked products retrieved successfully.',
+      data: productsWithLikes,
     };
   }
 
