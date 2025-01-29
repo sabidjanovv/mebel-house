@@ -29,7 +29,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(AdminGuard)
+  // @UseGuards(AdminGuard)
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   async create(
