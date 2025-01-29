@@ -72,12 +72,12 @@ export class ProductService {
     let likedProductIds = [];
     if (token) {
       try {
-        const { id } = this.jwtService.decode(token) as { id: string };
+        const { id } = this.jwtService.decode(token) as { id: string };        
         if (id) {
           const likes = await this.wishlistModel.findAll({
             where: { clientId: +id },
           });
-          likedProductIds = likes.map((like) => like.productId);
+          likedProductIds = likes.map((like) => +like.productId);
         }
       } catch (error) {}
     }
@@ -112,12 +112,11 @@ export class ProductService {
           limit,
         });
 
-      const productsWithLikes = data.map((product) => {
-        return {
-          ...product.dataValues,
-          isLike: likedProductIds.includes(product.id),
-        };
-      });
+      const productsWithLikes = data.map((product) => ({
+        ...product.get({ plain: true }),
+        isLike: (likedProductIds).includes(+product.id),
+      }));
+
       return {
         data: productsWithLikes as Product[],
         page,

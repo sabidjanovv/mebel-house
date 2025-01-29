@@ -37,7 +37,6 @@ export class WishlistService {
         productId: createWishlistDto.productId,
       },
     });
-    console.log(existingWishlist);
 
     if (existingWishlist) {
       await this.wishlistModel.destroy({ where: { id: existingWishlist.id } });
@@ -102,26 +101,21 @@ export class WishlistService {
     const likes = await this.wishlistModel.findAll({
       where: { clientId },
     });
-
-    const likedProductIds = likes.map((like) => like.productId);
+    
+    const likedProductIds = likes.map((like) => +like.productId);
     if (likedProductIds.length === 0) {
       return {
         message: 'No liked products found for this client.',
         data: [],
       };
     }
-
+    
     // Fetch products with discount relation
-    console.log(likedProductIds); // [2,5,7]
-
-    const products = await Promise.all(
-      likedProductIds.map(async (item) => {
-        return await this.productModel.findOne({
-          where: { id: +item },
-          include: [{ model: this.productModel }],
-        });
-      }),
-    );
+    // console.log(likedProductIds); // [2,5,7]
+    
+    const products = await this.productModel.findAll({
+      where: { id: likedProductIds },
+    });
 
     // const products = await this.productModel.findAll({
     //   where: { id: likedProductIds },
@@ -130,17 +124,14 @@ export class WishlistService {
 
     // Add isLike field
     const productsWithLikes = products.map((product) => ({
-      ...product.get({ plain: true }), // Sequelize obyektini oddiy obyektga o'tkazish
-      isLike: likedProductIds.includes(product.id),
+      ...product.get({ plain: true }),
+      isLike: (likedProductIds ?? []).includes(+product.id),
     }));
+
 
     return {
       message: 'All liked products retrieved successfully.',
       data: productsWithLikes,
     };
   }
-
-  // findOne(id: number) {
-  //   return this.wishlistModel.findByPk(id);
-  // }
 }
