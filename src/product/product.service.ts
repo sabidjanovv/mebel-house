@@ -12,12 +12,16 @@ import { Op } from 'sequelize';
 import { PaginationDto } from './dto/pagination.dto';
 import { Category } from 'src/category/models/category.model';
 import { deleteFiles, saveFile } from 'src/common/helpers/saveImage';
+import { Wishlist } from '../wishlist/models/wishlist.model';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product) private productModel: typeof Product,
     @InjectModel(Category) private readonly categoryModel: typeof Category,
+    @InjectModel(Wishlist) private readonly wishlistModel: typeof Wishlist,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createProductDto: CreateProductDto, images: any[]) {
@@ -65,6 +69,19 @@ export class ProductService {
       price,
     } = query;
 
+    let likedProductIds = [];
+    if (token) {
+      try {
+        const { id } = this.jwtService.decode(token) as { id: string };
+        if (id) {
+          const likes = await this.wishlistModel.findAll({
+            where: { clientId: +id },
+          });
+          likedProductIds = likes.map((like) => like.productId);
+        }
+      } catch (error) {}
+    }
+
     const offset = (page - 1) * limit;
 
     const where: any = {};
@@ -95,8 +112,14 @@ export class ProductService {
           limit,
         });
 
+      const productsWithLikes = data.map((product) => {
+        return {
+          ...product,
+          isLike: likedProductIds.includes(product.id),
+        };
+      });
       return {
-        data,
+        data: productsWithLikes as Product[],
         page,
         limit,
         total,
