@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Wishlist } from './models/wishlist.model';
@@ -108,10 +112,18 @@ export class WishlistService {
     }
 
     // Fetch products with discount relation
-    const products = await this.productModel.findAll({
-      where: { id: likedProductIds },
-      include: [{ model: this.productModel }],
-    });
+    console.log(likedProductIds); // [2,5,7]
+
+    let products = [];
+    (async function () {
+      for await (let id of likedProductIds) {
+        const product = this.productModel.findOne({
+          where: { id: id },
+          include: [{ model: this.productModel }],
+        });
+        products.push(product);
+      }
+    })();
 
     // Add isLike field
     const productsWithLikes = products.map((product) => ({

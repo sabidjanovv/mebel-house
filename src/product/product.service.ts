@@ -53,7 +53,7 @@ export class ProductService {
     query: PaginationDto,
     token: string,
   ): Promise<{
-    data: Product[];
+    data: any;
     page: number;
     limit: number;
     total: number;
@@ -119,7 +119,7 @@ export class ProductService {
         };
       });
       return {
-        data: productsWithLikes as Product[],
+        data: productsWithLikes,
         page,
         limit,
         total,
