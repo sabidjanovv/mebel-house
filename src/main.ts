@@ -33,7 +33,6 @@ console.log(join(__dirname, '..', 'uploads'));
             'http://localhost:5177',
             'http://localhost:5178',
             'http://localhost:5179',
-            'http://localhost:5180',
             'http://localhost:3001',
             'http://localhost:3011',
             'http://167.71.195.218:3001',

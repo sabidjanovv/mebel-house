@@ -13,7 +13,6 @@ interface IOrderItemsCreationAttr {
   orderId: number;
   productId: number;
   quantity: number;
-  price: number;
 }
 
 @Table({ tableName: 'order_items' })
@@ -49,10 +48,4 @@ export class OrderItems extends Model<OrderItems, IOrderItemsCreationAttr> {
     allowNull: true,
   })
   quantity: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  price: number;
 }

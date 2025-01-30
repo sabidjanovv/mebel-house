@@ -10,6 +10,7 @@ import {
 import { OrderItems } from 'src/order_items/models/order_item.model';
 import { Payment } from 'src/payment/models/payment.model';
 import { Client } from '../../client/models/client.model';
+import { Address } from '../../addresses/models/address.model';
 
 export enum OrderStatus {
   PENDING = 'pending',
@@ -20,6 +21,7 @@ export enum OrderStatus {
 
 interface IOrderCreationAttr {
   clientId: number;
+  addressId: number;
   status: OrderStatus;
   total_price: number;
   shipping_date: Date;
@@ -43,6 +45,15 @@ export class Order extends Model<Order, IOrderCreationAttr> {
   clientId: number;
   @BelongsTo(() => Client)
   client: Client;
+
+  @ForeignKey(() => Address)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  addressId: number;
+  @BelongsTo(() => Address)
+  address: Address;
 
   @Column({
     type: DataType.ENUM,
