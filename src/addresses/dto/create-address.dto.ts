@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, Matches } from "class-validator";
 
 
 export class CreateAddressDto {
@@ -8,28 +8,27 @@ export class CreateAddressDto {
   @IsNumber({}, { message: 'Car ID must be a number' })
   clientId: number;
 
-  @ApiProperty({ example: "123 Main St", description: 'Street' })
+  @ApiProperty({ example: '123 Main St', description: 'Street' })
   @IsNotEmpty({ message: 'Street' })
   @IsString({ message: 'Street must be a string' })
   street: string;
 
-  @ApiProperty({ example: 1, description: 'Region ID' })
+  @ApiProperty({ example: 'Tashkent', description: 'Region name' })
   @IsNotEmpty({ message: 'Region ID' })
-  @IsNumber({}, { message: 'Region ID must be a number' })
-  regionId: number;
+  region: string;
 
-  @ApiProperty({ example: "New York", description: 'State' })
-  @IsNotEmpty({ message: 'State' })
-  @IsString({ message: 'State must be a string' })
-  state: string;
-
-  @ApiProperty({ example: "10001", description: 'Zip Code' })
+  @ApiProperty({ example: 10001, description: 'Zip Code' })
   @IsNotEmpty({ message: 'Zip Code' })
-  @IsString({ message: 'Zip Code must be a string' })
-  zipCode: string;
+  @IsNumber({}, { message: 'Zip Code must be a number' })
+  zipCode: number;
 
-  @ApiProperty({ example: "USA", description: 'Country' })
-  @IsNotEmpty({ message: 'Country' })
-  @IsString({ message: 'Country must be a string' })
-  country: string;
+  @ApiProperty({
+    description: "Client's phone number",
+    example: '+998901234567',
+  })
+  @IsString({ message: 'Phone number must be a string' })
+  @Matches(/^\+998[0-9]{9}$/, {
+    message: 'Phone number must match the Uzbekistan format (+998901234567)',
+  })
+  phone_number: string;
 }

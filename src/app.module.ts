@@ -16,21 +16,11 @@ import { OrderModule } from './order/order.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CategoryModule } from './category/category.module';
 import { PaymentModule } from './payment/payment.module';
-import { RegionModule } from './region/region.module';
-import { DistrictModule } from './district/district.module';
 import { ProductModule } from './product/product.module';
 import { OrderItemsModule } from './order_items/order_items.module';
 import { CartItemsModule } from './cart_items/cart_items.module';
 import { ProductDetailModule } from './product_detail/product_detail.module';
-import { Order } from './order/models/order.model';
-import { OrderItems } from './order_items/models/order_item.model';
-import { Payment } from './payment/models/payment.model';
-import { Address } from './addresses/models/address.model';
-import { OtpModule } from './otp/otp.module';
-import { Otp } from './otp/models/otp.model';
-import { Client } from './client/models/client.model';
-import { FileModule } from './file/file.module';
-import { Review } from './reviews/models/review.model';
+
 
 @Module({
   imports: [
@@ -67,8 +57,6 @@ import { Review } from './reviews/models/review.model';
     ReviewsModule,
     CategoryModule,
     PaymentModule,
-    RegionModule,
-    DistrictModule,
     ProductModule,
     OrderItemsModule,
     CartItemsModule,

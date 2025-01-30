@@ -119,7 +119,7 @@ export class ProductService {
 
       productsWithLikes.map((product) => {
         if (product.discount) {
-          product.price = product.price / (1 - product.discount / 100);
+          product.price = product.price * ((100 - product.discount)/100);
         }
       });
 

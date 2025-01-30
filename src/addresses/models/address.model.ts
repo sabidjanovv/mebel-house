@@ -1,73 +1,68 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Client } from "src/client/models/client.model";
-import { Region } from "src/region/models/region.model";
+import { Order } from "../../order/models/order.model";
 
 
-interface IAddreeAttr{
+interface IAddressAttr{
     clientId: number;
+    region: string
     street: string;
-    regionId: number;
-    state: string;
-    zipCode: string;
-    country: string;
+    zipCode: number;
+    phone_number: string;
 }
 
-@Table({ tableName: "address"})
-export class Address extends Model<Address,IAddreeAttr>{
-    @ApiProperty({example: 1, description: "Address"})
-    @Column({
-        type: DataType.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    })
-    id: number;
+@Table({ tableName: 'address' })
+export class Address extends Model<Address, IAddressAttr> {
+  @ApiProperty({ example: 1, description: 'Address' })
+  @Column({
+    type: DataType.BIGINT,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  id: number;
 
-    @ApiProperty({example: 1, description: "Client"})
-    @ForeignKey(()=> Client)
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    clientId: number;
-    @BelongsTo(()=> Client)
-    client: Client;
+  @ApiProperty({ example: 1, description: 'Client' })
+  @ForeignKey(() => Client)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  clientId: number;
+  @BelongsTo(() => Client)
+  client: Client;
 
-    @ApiProperty({example: "123 Main St", description: "Street"})
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    street: string;
+  @ApiProperty({ example: 'Tashkent', description: 'Street' })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  region: string;
 
-    @ApiProperty({example: 12345, description: "House number"})
-    @ForeignKey(()=> Region)
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    regionId: number;
-    @BelongsTo(()=> Region)
-    region: Region;
+  @ApiProperty({ example: '123 Main St', description: 'Street' })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  street: string;
 
-    @ApiProperty({example: "New York", description: "Region"})
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    state: string;
+  @ApiProperty({ example: 'NY', description: 'Zip code' })
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  zipCode: number;
 
-    @ApiProperty({example: "NY", description: "Zip code"})
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    zipCode: string;
+  @ApiProperty({
+    example: '+998901234567',
+    description: 'Extra phone number',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  phone_number: string;
 
-    @ApiProperty({example: "USA", description: "Country"})
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    country: string;
+  @HasMany(() => Order)
+  orders: Order[];
 }
