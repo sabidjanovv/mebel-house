@@ -17,39 +17,32 @@ async function start() {
     });
     app.setGlobalPrefix('api');
     app.use(cookieParser());
-console.log(join(__dirname, '..', 'uploads'));
+    console.log(join(__dirname, '..', 'uploads'));
 
-    app.useGlobalPipes(new ValidationPipe({transform:true}));
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.useGlobalFilters(new AllExceptionsFilter());
     // app.useGlobalPipes(new CustomValidationPipe())
 
-      app.enableCors({
-        origin: (origin, callback) => {
-          const allowedOrigins = [
-            'http://localhost:5173',
-            'http://localhost:5174',
-            'http://localhost:5175',
-            'http://localhost:5176',
-            'http://localhost:5177',
-            'http://localhost:5178',
-            'http://localhost:5179',
-            'http://localhost:3001',
-            'http://localhost:3011',
-            'http://167.71.195.218:3001',
-            'https://167.71.195.218:3001',
-            'https://sabidjanov.uz',
-            'https://mebel-house.vercel.app',
-          ];
-          if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-          } else {
-            callback(new BadRequestException('Not allowed by CORS'));
-          }
-        },
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        credentials: true,
-      });
-
+    app.enableCors({
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          'http://localhost:5173',
+          'http://localhost:3001',
+          'http://localhost:3011',
+          'http://167.71.195.218:3001',
+          'https://167.71.195.218:3001',
+          'https://sabidjanov.uz',
+          'https://mebel-house.vercel.app',
+        ];
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new BadRequestException('Not allowed by CORS'));
+        }
+      },
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+    });
 
     const config = new DocumentBuilder()
       .setTitle('Mebel House')
