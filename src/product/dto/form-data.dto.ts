@@ -18,6 +18,7 @@ export class FormDataDto {
   })
   @Type(() => Number)
   @IsNumber()
+  @IsOptional()
   categoryId: number;
 
   @ApiProperty({
@@ -37,6 +38,7 @@ export class FormDataDto {
   })
   @IsString({ message: 'Name must be a string.' })
   @Length(1, 255, { message: 'Name must be between 1 and 255 characters.' })
+  @IsOptional()
   name: string;
 
   @ApiProperty({
@@ -47,12 +49,14 @@ export class FormDataDto {
   @Length(1, 255, {
     message: 'Description must be between 1 and 255 characters.',
   })
+  @IsOptional()
   description: string;
 
   @ApiProperty({ description: 'Price of the product', example: 199 })
   @IsNumber()
   @Min(0, { message: 'Price must be at least 0.' })
   @Type(() => Number)
+  @IsOptional()
   price: number;
 
   @ApiProperty({
@@ -65,6 +69,7 @@ export class FormDataDto {
   @IsNumber({}, { message: 'Chegirma foiz raqam bo‘lishi kerak' })
   @Min(0, { message: 'Chegirma 0 dan kichik bo‘lmasligi kerak' })
   @Max(100, { message: 'Chegirma 100 dan katta bo‘lmasligi kerak' })
+  @IsOptional()
   discount: number;
 
   @ApiProperty({ description: 'Average rating of the product', example: 5 })
@@ -72,12 +77,14 @@ export class FormDataDto {
   @IsInt({ message: 'Average rating must be an integer.' })
   @Min(0, { message: 'Average rating must be at least 0.' })
   @Max(5)
+  @IsOptional()
   avg_rating: number;
 
   @ApiProperty({ description: 'Stock quantity of the product', example: 50 })
   @Type(() => Number)
   @IsInt({ message: 'Stock must be an integer.' })
   @Min(0, { message: 'Stock must be at least 0.' })
+  @IsOptional()
   stock: number;
 
   @ApiProperty({
@@ -86,6 +93,7 @@ export class FormDataDto {
     nullable: true,
   })
   @IsString()
+  @IsOptional()
   colors: string;
 
   @ApiProperty({
@@ -94,5 +102,6 @@ export class FormDataDto {
     nullable: true,
   })
   @IsString()
+  @IsOptional()
   tags: string;
 }
