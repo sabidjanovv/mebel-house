@@ -8,6 +8,7 @@ import { PaginationDto } from '../product/dto/pagination.dto';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { ClientSelfBodyGuard } from '../common/guards/client-self-body.guard';
 import { AdminClientSelfGuard } from '../common/guards/admin-clientSelf.guard';
+import { OrderDto } from './dto/order.dto';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -22,8 +23,8 @@ export class OrderController {
     type: Order,
   })
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  create(@Body() orderDto: OrderDto) {
+    return this.orderService.create(orderDto);
   }
 
   // @ApiOperation({ summary: 'Get all orders' })

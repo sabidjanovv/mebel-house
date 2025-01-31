@@ -7,6 +7,10 @@ export class CreateOrderDto {
   @IsNumber()
   clientId: number;
 
+  @ApiProperty({ example: 1, description: "Enter address ID" })
+  @IsNumber()
+  addressId: number;
+
   @ApiProperty({
     example: 'PENDING',
     description: 'Enter status of the order',

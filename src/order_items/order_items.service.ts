@@ -3,6 +3,9 @@ import { CreateOrderItemDto } from './dto/create-order_item.dto';
 import { UpdateOrderItemDto } from './dto/update-order_item.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { OrderItems } from './models/order_item.model';
+import { PaginationDto } from '../product/dto/pagination.dto';
+import { Order } from '../order/models/order.model';
+import { Product } from '../product/models/product.model';
 
 @Injectable()
 export class OrderItemsService {
@@ -15,11 +18,26 @@ export class OrderItemsService {
     return this.orderItemsModel.create(createOrderItemDto);
   }
 
-  async findAll() {
-    const order_items = await this.orderItemsModel.findAll({
-      include: { all: true },
-    });
-    return { data: order_items, total: order_items.length };
+  async findAll(paginationDto: PaginationDto) {
+    const { limit, page } = paginationDto;
+    const offset = (page - 1) * limit;
+
+    const { count: total, rows: orderDetail } =
+      await this.orderItemsModel.findAndCountAll({
+        include: [
+          { model: Order, as: 'order' },
+          { model: Product, as: 'product' },
+        ],
+        limit,
+        offset,
+      });
+
+    return {
+      orderDetail,
+      total,
+      limit,
+      page,
+    };
   }
 
   findOne(id: number) {

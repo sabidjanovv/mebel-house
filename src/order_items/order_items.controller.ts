@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { OrderItemsService } from './order_items.service';
 import { CreateOrderItemDto } from './dto/create-order_item.dto';
 import { UpdateOrderItemDto } from './dto/update-order_item.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OrderItems } from './models/order_item.model';
+import { PaginationDto } from '../product/dto/pagination.dto';
 
 @ApiTags('Order-items')
 @Controller('order-items')
@@ -36,8 +38,8 @@ export class OrderItemsController {
     type: [OrderItems],
   })
   @Get()
-  findAll() {
-    return this.orderItemsService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.orderItemsService.findAll(paginationDto);
   }
 
   @ApiOperation({ summary: 'Get order items by ID' })
