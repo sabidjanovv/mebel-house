@@ -123,10 +123,21 @@ export class WishlistService {
     // });
 
     // Add isLike field
-    const productsWithLikes = products.map((product) => ({
-      ...product.get({ plain: true }),
-      isLike: (likedProductIds ?? []).includes(+product.id),
-    }));
+    // const productsWithLikes = products.map((product) => ({
+    //   ...product.get({ plain: true }),
+    //   isLike: (likedProductIds ?? []).includes(+product.id),
+    // }));
+
+
+      const productsWithLikes = products.map((product) => {
+        const discountedPrice =
+          product.price - (product.price * product?.discount) / 100;
+        return {
+          ...product.get({ plain: true }),
+          isLike: likedProductIds.includes(+product.id),
+          price: discountedPrice,
+        };
+      });
 
 
     return {
