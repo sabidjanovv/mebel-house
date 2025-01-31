@@ -50,6 +50,7 @@ export class Address extends Model<Address, IAddressAttr> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0
   })
   zipCode: number;
 
