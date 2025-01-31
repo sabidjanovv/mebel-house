@@ -112,14 +112,13 @@ export class ProductService {
           limit,
         });
 
-      const productsWithLikes = data.map((product) => ({
-        ...product.get({ plain: true }),
-        isLike: likedProductIds.includes(+product.id),
-      }));
-
-      productsWithLikes.map((product) => {
-        if (product.discount) {
-          product.price = product.price * ((100 - product.discount)/100);
+      const productsWithLikes = data.map((product) => {
+        const discountedPrice =
+          product.price - (product.price * product?.discount) / 100;
+        return {
+          ...product.get({ plain: true }),
+          isLike: likedProductIds.includes(+product.id),
+          price:discountedPrice
         }
       });
 
