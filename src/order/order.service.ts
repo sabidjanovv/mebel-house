@@ -185,8 +185,11 @@ export class OrderService {
           );
         }
 
-        product.stock -= order_item.quantity;
-        await this.productModel.create(product);
+        // Stock kamaytirish
+        product.stock -= Number(order_item.quantity);
+
+        // Ma'lumotni yangilash
+        await product.update({ stock: product.stock });
 
         return this.orderItemsService.create({
           ...order_item,
@@ -194,6 +197,7 @@ export class OrderService {
         });
       }),
     );
+
 
     if (!new_order_items) {
       throw new BadRequestException('Error on creating order details');
