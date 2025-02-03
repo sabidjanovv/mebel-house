@@ -6,18 +6,22 @@ import {
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectModel } from '@nestjs/sequelize';
-import { Order } from './models/order.model';
+import { Order, OrderStatus } from './models/order.model';
 import { PaginationDto } from '../product/dto/pagination.dto';
 import { Client } from '../client/models/client.model';
 import { OrderDto } from './dto/order.dto';
 import { AddressesService } from '../addresses/addresses.service';
 import { Product } from '../product/models/product.model';
 import { OrderItemsService } from '../order_items/order_items.service';
+import { OrderItems } from '../order_items/models/order_item.model';
+import { CANCELLED } from 'dns';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order) private readonly orderModel: typeof Order,
+    @InjectModel(OrderItems)
+    private readonly orderItemsModel: typeof OrderItems,
     @InjectModel(Client) private readonly clientModel: typeof Client,
     @InjectModel(Product) private readonly productModel: typeof Product,
     private readonly addressService: AddressesService,
@@ -155,6 +159,7 @@ export class OrderService {
           `Not enough stock for product: ${product.name} (Available: ${product.stock}, Requested: ${order_item.quantity})`,
         );
       }
+      product.stock = product.stock - order_item.quantity;
     }
 
     const order = await this.orderModel.create({
@@ -197,7 +202,6 @@ export class OrderService {
         });
       }),
     );
-
 
     if (!new_order_items) {
       throw new BadRequestException('Error on creating order details');
@@ -282,7 +286,31 @@ export class OrderService {
     return updated_order[1][0];
   }
 
-  remove(id: number) {
-    return this.orderModel.destroy({ where: { id } });
+  async remove(id: number) {
+    const order = await this.orderModel.findOne({
+      where: { id },
+      include: [
+        {
+          model: this.orderItemsModel,
+          include: [{ model: this.productModel }],
+        },
+      ],
+    });
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    // Mahsulotlarning stokini yangilash
+    for (const orderItem of order.order_items) {
+      const product = orderItem.product;
+      if (product) {
+        await product.update({ stock: product.stock + orderItem.quantity });
+      }
+    }
+
+    await order.update({ status: OrderStatus.CANCELLED });
+
+    return { message: 'Order cancelled successfully' };
   }
 }
