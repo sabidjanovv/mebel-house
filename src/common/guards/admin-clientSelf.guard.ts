@@ -39,6 +39,7 @@ export class AdminClientSelfGuard implements CanActivate {
       payload = await this.jwtService.verify(token, {
         secret: process.env.ADMIN_ACCESS_TOKEN_KEY,
       });
+      console.log(payload);
     } catch (error) {
       try {
         payload = await this.jwtService.verify(token, {
@@ -49,15 +50,15 @@ export class AdminClientSelfGuard implements CanActivate {
           throw new ForbiddenException('Client is not active');
         }
 
-        const order = await this.orderModel.findByPk(req.params.id);
+        const order = await this.orderModel.findByPk(Number(req.params.id));
+        
         if (!order) {
           throw new NotFoundException('Order not found');
-        }
+        }        
 
         if (+order.clientId !== payload.id) {
           throw new ForbiddenException('You are not the owner of this order');
         }
-
         return true;
       } catch (innerError) {
         throw new BadRequestException('Invalid or expired client token');

@@ -79,17 +79,17 @@ export class OrderController {
     });
   }
 
-  @UseGuards(AdminClientSelfGuard)
-  @ApiOperation({ summary: 'Get orders by ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'All orders by ID',
-    type: Order,
-  })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
-  }
+  // @UseGuards(AdminClientSelfGuard)
+  // @ApiOperation({ summary: 'Get orders by ID' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'All orders by ID',
+  //   type: Order,
+  // })
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.orderService.findOne(+id);
+  // }
 
   @ApiOperation({ summary: 'Get orders by Clietn ID' })
   @ApiResponse({
@@ -98,9 +98,9 @@ export class OrderController {
     type: [Order],
   })
   @Get(':id')
-  findByClientId(@Query('clientId') clientId: string) {
-    // Query parameterdan olingan `clientId`ni service'ga yuboramiz
-    return this.orderService.findByClientId(+clientId);
+  findByClientId(@Param('id') id: string) {
+    // Query parameterdan olingan `id`ni service'ga yuboramiz
+    return this.orderService.findByClientId(+id);
   }
 
   @UseGuards(AdminClientSelfGuard)
