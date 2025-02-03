@@ -577,6 +577,7 @@ export class AuthService {
         client: {
           id: client.id,
           email: client.email,
+          phone_number: client.phone_number,
           full_name: client.full_name,
           is_active: client.is_active,
         },

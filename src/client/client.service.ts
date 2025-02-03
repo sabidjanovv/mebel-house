@@ -84,7 +84,7 @@ export class ClientService {
     const updatedClient = await this.clientModel.update(updatedFields, {
       where: { id },
       returning: true,
-    });
+    });    
     return updatedClient[1][0];
   }
 
