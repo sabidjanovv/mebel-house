@@ -47,7 +47,7 @@ export class ClientSelfGuard implements CanActivate {
     }
 
     if (Number(payload.id) !== Number(req.params.id)) {
-      throw new ForbiddenException("Sizda bunday huquq yo'q!");
+      throw new ForbiddenException("You can not do this!");
     }
 
     return true;
